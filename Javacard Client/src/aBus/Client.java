@@ -85,7 +85,7 @@ public class Client {
 					Date date = new Date();
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(date);
-					DateByte db = new DateByte((byte)(calendar.get(Calendar.DAY_OF_MONTH)),(byte)(calendar.get(Calendar.MONTH)),(short)(calendar.get(Calendar.YEAR)));
+					//DateByte db = new DateByte((byte)(calendar.get(Calendar.DAY_OF_MONTH)),(byte)(calendar.get(Calendar.MONTH)),(short)(calendar.get(Calendar.YEAR)));
 					short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() != 0x9000) {

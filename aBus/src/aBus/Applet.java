@@ -1,13 +1,12 @@
 package aBus;
 
 import javacard.framework.APDU;
-import javacard.framework.OwnerPIN;
-import javacard.framework.Applet;
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
+import javacard.framework.OwnerPIN;
 
-public class MonApplet extends Applet {
-    // On d�finit des constantes pour faciliter l'�criture des programmes
+public class Applet extends javacard.framework.Applet {
+	// On d�finit des constantes pour faciliter l'�criture des programmes
 
     // Constante pour le CLA
     final static byte MON_CLA = (byte) 0x25;
@@ -41,7 +40,7 @@ public class MonApplet extends Applet {
     private short lastTravelTime;
     
 
-    private MonApplet(byte[] bArray, short bOffset, byte bLength) {
+    private Applet(byte[] bArray, short bOffset, byte bLength) {
         /*PIN = new OwnerPIN(PIN_TRY_LIMIT, MAX_PIN_SIZE);
         PUK = new OwnerPIN(PUK_TRY_LIMIT, MAX_PUK_SIZE);
         //TODO: Generation code PIN + PUK
@@ -66,7 +65,7 @@ public class MonApplet extends Applet {
     }
 
     public static void install(byte[] bArray, short bOffset, byte bLength) {
-        new MonApplet(bArray, bOffset, bLength);
+        new Applet(bArray, bOffset, bLength);
     }
 
     public boolean select() {

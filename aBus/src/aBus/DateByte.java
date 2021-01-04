@@ -1,6 +1,5 @@
 package aBus;
 
-
 public class DateByte{
     private byte day;
     private byte month;
