@@ -149,20 +149,21 @@ public class Client {
 			switch (choix) {
 				case '0':
 					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
+					int pin1 = (int)(Math.random() * 10);
+					int pin2 = (int)(Math.random() * 10);
+					int pin3 = (int)(Math.random() * 10);
+					int pin4 = (int)(Math.random() * 10);
+					int puk1 = (int)(Math.random() * 10);
+					int puk2 = (int)(Math.random() * 10);
+					int puk3 = (int)(Math.random() * 10);
+					int puk4 = (int)(Math.random() * 10);
+					byte[] data = {
+						(byte)pin1,(byte)pin2,(byte)pin3,(byte)pin4, //Code PIN
+						(byte)puk1,(byte)puk2,(byte)puk3,(byte)puk4 //Code PUK
+					};
+					apdu.setDataIn(data);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
-						int pin1 = (int)(Math.random() * 10);
-						int pin2 = (int)(Math.random() * 10);
-						int pin3 = (int)(Math.random() * 10);
-						int pin4 = (int)(Math.random() * 10);
-						int puk1 = (int)(Math.random() * 10);
-						int puk2 = (int)(Math.random() * 10);
-						int puk3 = (int)(Math.random() * 10);
-						int puk4 = (int)(Math.random() * 10);
-						byte[] data = {
-							(byte)pin1,(byte)pin2,(byte)pin3,(byte)pin4, //Code PIN
-							(byte)puk1,(byte)puk2,(byte)puk3,(byte)puk4 //Code PUK
-						};
 						System.out.println("Votre code PIN est : " +pin1 +""+pin2+""+pin3+""+pin4);
 						System.out.println("Votre code PUK est : " +puk1 +""+puk2+""+puk3+""+puk4);
 						System.out.println("Carte intialisé !");
@@ -200,8 +201,8 @@ public class Client {
 						System.out.println("Saisir un montant :");
 						byte amount = clavier.nextByte();
 						try {
-							byte[] data = {amount};
-							apdu.setDataIn(data);
+							byte[] dataA = {amount};
+							apdu.setDataIn(dataA);
 							cad.exchangeApdu(apdu);
 						} catch (Exception e) {
 							System.out.println("Erreur: Impossible d'executer la commande");
