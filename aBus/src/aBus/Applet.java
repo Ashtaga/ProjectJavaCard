@@ -159,10 +159,9 @@ public class Applet extends javacard.framework.Applet {
 					    			buffer[ISO7816.OFFSET_CDATA],
 					    			buffer[ISO7816.OFFSET_CDATA + 1],
 					    			buffer[ISO7816.OFFSET_CDATA + 2],
-					    			buffer[ISO7816.OFFSET_CDATA + 3],
+					    			buffer[ISO7816.OFFSET_CDATA + 3]
 					    		};
-								PIN.check(checkpin, (short)0, (byte)4);
-								if(PIN.isValidated()) {
+								if(PIN.check(checkpin, (short)0, (byte)4)) {
 									apdu.setOutgoingAndSend((short) 0, (short) 0);
 								}else {
 									ISOException.throwIt(SW_INVALID_PIN);
@@ -170,7 +169,7 @@ public class Applet extends javacard.framework.Applet {
 							break;
 							case P1_RELOAD:
 								short amount = buffer[ISO7816.OFFSET_CDATA];
-					    		if(amount < MAX_SIZE_RELOADING_AMOUNT && amount > 0) {
+					    		if(amount <= MAX_SIZE_RELOADING_AMOUNT && amount > 0) {
 					    			balance += (byte)(amount);
 					    			apdu.setOutgoingAndSend((short) 0, (short) 0);
 					    		}else {
@@ -242,15 +241,14 @@ public class Applet extends javacard.framework.Applet {
 				    			buffer[ISO7816.OFFSET_CDATA],
 				    			buffer[ISO7816.OFFSET_CDATA + 1],
 				    			buffer[ISO7816.OFFSET_CDATA + 2],
-				    			buffer[ISO7816.OFFSET_CDATA + 3],
+				    			buffer[ISO7816.OFFSET_CDATA + 3]
 				    		};
 							PIN.update(cpin, (short)0, (byte)4);
-							
 							byte[] cpuk = {
 					    			buffer[ISO7816.OFFSET_CDATA + 4],
 					    			buffer[ISO7816.OFFSET_CDATA + 5],
 					    			buffer[ISO7816.OFFSET_CDATA + 6],
-					    			buffer[ISO7816.OFFSET_CDATA + 7],
+					    			buffer[ISO7816.OFFSET_CDATA + 7]
 				    		};
 							PUK.update(cpuk, (short)0, (byte)4);
 
