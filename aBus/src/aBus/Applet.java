@@ -42,7 +42,7 @@ public class Applet extends javacard.framework.Applet {
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
     final static byte MAX_SIZE_RELOADING_AMOUNT = (byte) 0x05;//5
-    final static byte TRAVEL_VALIDITY_TIME = (byte)1;//0x3C;//60
+    final static byte TRAVEL_VALIDITY_TIME = (byte)0x3C;//60
     
     final static byte PIN_TRY_LIMIT = (byte) 0x03;
     final static byte MAX_PIN_SIZE = (byte) 0x06;
@@ -79,7 +79,7 @@ public class Applet extends javacard.framework.Applet {
         aLen = bArray[bOffset];
         PUK.update(bArray, (short) (bOffset + 1), aLen);*/
     	lifeCycleState = PRE_PERSO;
-        balance = 0x01;
+        balance = 0x00;
         lastTravelDate = new DateByte((byte)0x01,(byte)0x01,(short)2021);
         lastTravelTime = 0x00;
         register();
