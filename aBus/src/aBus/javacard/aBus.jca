@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Tue Jan 05 19:43:23 CET 2021
+// on Tue Jan 05 20:22:12 CET 2021
 
 .package aBus {
 	.aid 0x1:0x2:0x3:0x4:0x5:0x6:0x7:0x8:0x9:0x0;
@@ -60,22 +60,26 @@
 		// 21
 		virtualMethodRef DateByte/update(LaBus/DateByte;)V;
 		// 22
-		virtualMethodRef 0.10.8(SS)V;		// setOutgoingAndSend(SS)V
+		virtualMethodRef 0.9.1([BSB)Z;		// check([BSB)Z
 		// 23
-		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		virtualMethodRef 0.9.4()Z;		// isValidated()Z
 		// 24
-		classRef DateByte;
+		virtualMethodRef 0.10.8(SS)V;		// setOutgoingAndSend(SS)V
 		// 25
-		staticMethodRef DateByte/<init>(BBS)V;
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
 		// 26
-		virtualMethodRef 0.9.8([BSB)V;		// update([BSB)V
+		classRef DateByte;
 		// 27
-		staticMethodRef 1.0.0()V;		// java/lang/Object.<init>()V
+		staticMethodRef DateByte/<init>(BBS)V;
 		// 28
-		classRef 0.9;		// javacard/framework/OwnerPIN
+		virtualMethodRef 0.9.8([BSB)V;		// update([BSB)V
 		// 29
-		staticMethodRef 0.9.0(BB)V;		// javacard/framework/OwnerPIN.<init>(BB)V
+		staticMethodRef 1.0.0()V;		// java/lang/Object.<init>()V
 		// 30
+		classRef 0.9;		// javacard/framework/OwnerPIN
+		// 31
+		staticMethodRef 0.9.0(BB)V;		// javacard/framework/OwnerPIN.<init>(BB)V
+		// 32
 		virtualMethodRef 0.3.1()V;		// register()V
 	}
 
@@ -100,6 +104,8 @@
 			public static final byte USE = 1;		// B
 			public static final byte BLOCKED = 2;		// B
 			public static final byte DEAD = 3;		// B
+			public static final short P1_VERIFY_PIN = 1;		// S
+			public static final short P1_RELOAD = 2;		// S
 			static final byte MON_CLA = 37;		// B
 			static final byte INS_BUY_TRAVEL = 0;		// B
 			static final byte INS_RELOAD_CARD = 1;		// B
@@ -113,13 +119,15 @@
 			static final byte SW_TRAVEL_ALREADY_VALIDATED = 2;		// B
 			static final byte SW_INSUFFICIENT_BALANCE_ERROR = 3;		// B
 			static final byte SW_INVALID_AMOUNT = 4;		// B
+			static final byte SW_INVALID_PIN = 5;		// B
+			static final byte SW_INVALID_PUK = 6;		// B
 			static final byte MAX_BALANCE = 30;		// B
 			static final byte MAX_SIZE_RELOADING_AMOUNT = 5;		// B
 			static final byte TRAVEL_VALIDITY_TIME = 60;		// B
 			static final byte PIN_TRY_LIMIT = 3;		// B
-			static final byte MAX_PIN_SIZE = 6;		// B
+			static final byte MAX_PIN_SIZE = 4;		// B
 			static final byte PUK_TRY_LIMIT = 3;		// B
-			static final byte MAX_PUK_SIZE = 6;		// B
+			static final byte MAX_PUK_SIZE = 4;		// B
 		}
 
 		.publicMethodTable 6 {
@@ -141,20 +149,20 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 23;		// javacard/framework/Applet.<init>()V
+					invokespecial 25;		// javacard/framework/Applet.<init>()V
 					aload_0;
-					new 28;		// javacard/framework/OwnerPIN
+					new 30;		// javacard/framework/OwnerPIN
 					dup;
 					sconst_3;
-					bspush 6;
-					invokespecial 29;		// javacard/framework/OwnerPIN.<init>(BB)V
+					sconst_4;
+					invokespecial 31;		// javacard/framework/OwnerPIN.<init>(BB)V
 					putfield_a 0;		// reference aBus/Applet.PIN
 					aload_0;
-					new 28;		// javacard/framework/OwnerPIN
+					new 30;		// javacard/framework/OwnerPIN
 					dup;
 					sconst_3;
-					bspush 6;
-					invokespecial 29;		// javacard/framework/OwnerPIN.<init>(BB)V
+					sconst_4;
+					invokespecial 31;		// javacard/framework/OwnerPIN.<init>(BB)V
 					putfield_a 1;		// reference aBus/Applet.PUK
 					aload_0;
 					sconst_0;
@@ -163,18 +171,18 @@
 					sconst_0;
 					putfield_b 3;		// byte aBus/Applet.balance
 					aload_0;
-					new 24;		// aBus/DateByte
+					new 26;		// aBus/DateByte
 					dup;
 					sconst_1;
 					sconst_1;
 					sspush 2021;
-					invokespecial 25;		// aBus/DateByte.<init>(BBS)V
+					invokespecial 27;		// aBus/DateByte.<init>(BBS)V
 					putfield_a 4;		// reference aBus/Applet.lastTravelDate
 					aload_0;
 					sconst_0;
 					putfield_s 5;		// short aBus/Applet.lastTravelTime
 					aload_0;
-					invokevirtual 30;		// register()V
+					invokevirtual 32;		// register()V
 					return;
 		}
 
@@ -371,14 +379,14 @@
 					sconst_0;
 					baload;
 					bspush 37;
-					if_scmpne_w L45;
+					if_scmpne_w L50;
 				L1:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
 					sconst_3;
-					if_scmpeq_w L44;
+					if_scmpeq_w L49;
 				L2:	aload_2;
 					sconst_1;
 					baload;
-					stableswitch L43 0 7 L3 L12 L20 L25 L29 L35 L39 L40;
+					stableswitch L48 0 7 L3 L12 L25 L30 L34 L40 L44 L45;
 				L3:	aload_1;
 					invokevirtual 18;		// setIncomingAndReceive()S
 					pop;
@@ -406,7 +414,7 @@
 					bspush 10;
 					baload;
 					sstore 8;
-					new 24;		// aBus/DateByte
+					new 26;		// aBus/DateByte
 					dup;
 					sload_3;
 					sload 4;
@@ -419,7 +427,7 @@
 					sspush 255;
 					sand;
 					sor;
-					invokespecial 25;		// aBus/DateByte.<init>(BBS)V
+					invokespecial 27;		// aBus/DateByte.<init>(BBS)V
 					astore 9;
 					sload 8;
 					bspush 8;
@@ -433,13 +441,13 @@
 					ifne L5;
 				L4:	sspush 25601;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L5:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
 					sconst_2;
 					if_scmpne L7;
 				L6:	sspush 25602;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L7:	aload_0;
 					aload 9;
 					sload 10;
@@ -448,7 +456,7 @@
 					if_scmpge L9;
 				L8:	sconst_2;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L9:	getfield_b_this 3;		// byte aBus/Applet.balance
 					ifle L11;
 				L10:	aload_0;
@@ -464,194 +472,29 @@
 					aload_0;
 					sload 10;
 					putfield_s 5;		// short aBus/Applet.lastTravelTime
-					goto_w L46;
+					goto_w L51;
 				L11:	sconst_3;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L12:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
 					ifne L14;
 				L13:	sspush 25601;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L14:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
 					sconst_2;
 					if_scmpne L16;
 				L15:	sspush 25602;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
+					goto_w L51;
 				L16:	aload_1;
 					invokevirtual 18;		// setIncomingAndReceive()S
 					pop;
 					aload_2;
-					sconst_5;
-					baload;
-					sstore 11;
-					sload 11;
-					sconst_5;
-					if_scmpge L19;
-				L17:	sload 11;
-					ifle L19;
-				L18:	aload_0;
-					dup;
-					getfield_b 3;		// byte aBus/Applet.balance
-					sload 11;
-					s2b;
-					sadd;
-					s2b;
-					putfield_b 3;		// byte aBus/Applet.balance
-					aload_1;
-					sconst_0;
-					sconst_0;
-					invokevirtual 22;		// setOutgoingAndSend(SS)V
-					goto_w L46;
-				L19:	sconst_4;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L20:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					ifne L22;
-				L21:	sspush 25601;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L22:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
 					sconst_2;
-					if_scmpne L24;
-				L23:	sspush 25602;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L24:	aload_2;
-					sconst_0;
-					getfield_b_this 3;		// byte aBus/Applet.balance
-					bastore;
-					aload_1;
-					sconst_0;
-					sconst_1;
-					invokevirtual 22;		// setOutgoingAndSend(SS)V
-					goto_w L46;
-				L25:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					ifne L27;
-				L26:	sspush 25601;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L27:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					sconst_1;
-					if_scmpne_w L46;
-				L28:	sspush 25604;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L29:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					ifne L31;
-				L30:	sspush 25601;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L31:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					sconst_2;
-					if_scmpne L33;
-				L32:	sspush 25602;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L33:	aload_1;
-					invokevirtual 18;		// setIncomingAndReceive()S
-					pop;
-					aload_2;
-					sconst_5;
 					baload;
-					sstore_3;
-					aload_2;
-					bspush 6;
-					baload;
-					sstore 4;
-					aload_2;
-					bspush 7;
-					baload;
-					sstore 5;
-					aload_2;
-					bspush 8;
-					baload;
-					sstore 6;
-					aload_2;
-					bspush 9;
-					baload;
-					sstore 7;
-					aload_2;
-					bspush 10;
-					baload;
-					sstore 8;
-					aload_0;
-					new 24;		// aBus/DateByte
-					dup;
-					sload_3;
-					sload 4;
-					sload 6;
-					sspush 255;
-					sand;
-					bspush 8;
-					sshl;
-					sload 5;
-					sspush 255;
-					sand;
-					sor;
-					invokespecial 25;		// aBus/DateByte.<init>(BBS)V
-					putfield_a 6;		// reference aBus/Applet.controlDate
-					aload_0;
-					sload 8;
-					bspush 8;
-					sshl;
-					sload 7;
-					sspush 255;
-					sand;
-					sor;
-					putfield_s 7;		// short aBus/Applet.controlHour
-					aload_0;
-					aload_0;
-					getfield_a_this 6;		// reference aBus/Applet.controlDate
-					getfield_s_this 7;		// short aBus/Applet.controlHour
-					invokespecial 20;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
-					putfield_s 8;		// short aBus/Applet.validity
-					getfield_s_this 8;		// short aBus/Applet.validity
-					bspush 60;
-					if_scmple_w L46;
-				L34:	sconst_1;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L35:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					ifne L37;
-				L36:	sspush 25601;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L37:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					sconst_2;
-					if_scmpne_w L46;
-				L38:	sspush 25602;
-					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L46;
-				L39:	aload_2;
-					sconst_0;
-					getfield_s_this 8;		// short aBus/Applet.validity
-					sspush 255;
-					sand;
-					s2b;
-					bastore;
-					aload_2;
-					sconst_1;
-					getfield_s_this 8;		// short aBus/Applet.validity
-					bspush 8;
-					sshr;
-					sspush 255;
-					sand;
-					s2b;
-					bastore;
-					aload_2;
-					sconst_2;
-					bspush 60;
-					bastore;
-					aload_1;
-					sconst_0;
-					sconst_3;
-					invokevirtual 22;		// setOutgoingAndSend(SS)V
-					goto_w L46;
-				L40:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
-					ifne L42;
-				L41:	sconst_4;
+					stableswitch L24 1 2 L17 L20;
+				L17:	sconst_4;
 					newarray 11;
 					dup;
 					sconst_0;
@@ -682,7 +525,220 @@
 					aload 11;
 					sconst_0;
 					sconst_4;
-					invokevirtual 26;		// update([BSB)V
+					invokevirtual 22;		// check([BSB)Z
+					pop;
+					getfield_a_this 0;		// reference aBus/Applet.PIN
+					invokevirtual 23;		// isValidated()Z
+					ifeq L19;
+				L18:	aload_1;
+					sconst_0;
+					sconst_0;
+					invokevirtual 24;		// setOutgoingAndSend(SS)V
+					goto_w L51;
+				L19:	sconst_5;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L20:	aload_2;
+					sconst_5;
+					baload;
+					sstore 12;
+					sload 12;
+					sconst_5;
+					if_scmpge L23;
+				L21:	sload 12;
+					ifle L23;
+				L22:	aload_0;
+					dup;
+					getfield_b 3;		// byte aBus/Applet.balance
+					sload 12;
+					s2b;
+					sadd;
+					s2b;
+					putfield_b 3;		// byte aBus/Applet.balance
+					aload_1;
+					sconst_0;
+					sconst_0;
+					invokevirtual 24;		// setOutgoingAndSend(SS)V
+					goto_w L51;
+				L23:	sconst_4;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+				L24:	goto_w L51;
+				L25:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					ifne L27;
+				L26:	sspush 25601;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L27:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L29;
+				L28:	sspush 25602;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L29:	aload_2;
+					sconst_0;
+					getfield_b_this 3;		// byte aBus/Applet.balance
+					bastore;
+					aload_1;
+					sconst_0;
+					sconst_1;
+					invokevirtual 24;		// setOutgoingAndSend(SS)V
+					goto_w L51;
+				L30:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					ifne L32;
+				L31:	sspush 25601;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L32:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					sconst_1;
+					if_scmpne_w L51;
+				L33:	sspush 25604;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L34:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					ifne L36;
+				L35:	sspush 25601;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L36:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L38;
+				L37:	sspush 25602;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L38:	aload_1;
+					invokevirtual 18;		// setIncomingAndReceive()S
+					pop;
+					aload_2;
+					sconst_5;
+					baload;
+					sstore_3;
+					aload_2;
+					bspush 6;
+					baload;
+					sstore 4;
+					aload_2;
+					bspush 7;
+					baload;
+					sstore 5;
+					aload_2;
+					bspush 8;
+					baload;
+					sstore 6;
+					aload_2;
+					bspush 9;
+					baload;
+					sstore 7;
+					aload_2;
+					bspush 10;
+					baload;
+					sstore 8;
+					aload_0;
+					new 26;		// aBus/DateByte
+					dup;
+					sload_3;
+					sload 4;
+					sload 6;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sload 5;
+					sspush 255;
+					sand;
+					sor;
+					invokespecial 27;		// aBus/DateByte.<init>(BBS)V
+					putfield_a 6;		// reference aBus/Applet.controlDate
+					aload_0;
+					sload 8;
+					bspush 8;
+					sshl;
+					sload 7;
+					sspush 255;
+					sand;
+					sor;
+					putfield_s 7;		// short aBus/Applet.controlHour
+					aload_0;
+					aload_0;
+					getfield_a_this 6;		// reference aBus/Applet.controlDate
+					getfield_s_this 7;		// short aBus/Applet.controlHour
+					invokespecial 20;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
+					putfield_s 8;		// short aBus/Applet.validity
+					getfield_s_this 8;		// short aBus/Applet.validity
+					bspush 60;
+					if_scmple_w L51;
+				L39:	sconst_1;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L40:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					ifne L42;
+				L41:	sspush 25601;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L42:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne_w L51;
+				L43:	sspush 25602;
+					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L51;
+				L44:	aload_2;
+					sconst_0;
+					getfield_s_this 8;		// short aBus/Applet.validity
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					sconst_1;
+					getfield_s_this 8;		// short aBus/Applet.validity
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					sconst_2;
+					bspush 60;
+					bastore;
+					aload_1;
+					sconst_0;
+					sconst_3;
+					invokevirtual 24;		// setOutgoingAndSend(SS)V
+					goto_w L51;
+				L45:	getfield_b_this 2;		// byte aBus/Applet.lifeCycleState
+					ifne L47;
+				L46:	sconst_4;
+					newarray 11;
+					dup;
+					sconst_0;
+					aload_2;
+					sconst_5;
+					baload;
+					bastore;
+					dup;
+					sconst_1;
+					aload_2;
+					bspush 6;
+					baload;
+					bastore;
+					dup;
+					sconst_2;
+					aload_2;
+					bspush 7;
+					baload;
+					bastore;
+					dup;
+					sconst_3;
+					aload_2;
+					bspush 8;
+					baload;
+					bastore;
+					astore 11;
+					getfield_a_this 0;		// reference aBus/Applet.PIN
+					aload 11;
+					sconst_0;
+					sconst_4;
+					invokevirtual 28;		// update([BSB)V
 					sconst_4;
 					newarray 11;
 					dup;
@@ -714,27 +770,27 @@
 					aload 12;
 					sconst_0;
 					sconst_4;
-					invokevirtual 26;		// update([BSB)V
+					invokevirtual 28;		// update([BSB)V
 					aload_0;
 					sconst_1;
 					putfield_b 2;		// byte aBus/Applet.lifeCycleState
 					aload_1;
 					sconst_0;
 					sconst_0;
-					invokevirtual 22;		// setOutgoingAndSend(SS)V
-					goto L46;
-				L42:	sspush 25600;
+					invokevirtual 24;		// setOutgoingAndSend(SS)V
+					goto L51;
+				L47:	sspush 25600;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto L46;
-				L43:	sspush 27904;
+					goto L51;
+				L48:	sspush 27904;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto L46;
-				L44:	sspush 25603;
+					goto L51;
+				L49:	sspush 25603;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-					goto L46;
-				L45:	sspush 28160;
+					goto L51;
+				L50:	sspush 28160;
 					invokestatic 19;		// javacard/framework/ISOException.throwIt(S)V
-				L46:	return;
+				L51:	return;
 		}
 
 	}
@@ -764,7 +820,7 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 27;		// java/lang/Object.<init>()V
+					invokespecial 29;		// java/lang/Object.<init>()V
 					aload_0;
 					sconst_0;
 					putfield_b 9;		// byte aBus/DateByte.day
@@ -782,7 +838,7 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 27;		// java/lang/Object.<init>()V
+					invokespecial 29;		// java/lang/Object.<init>()V
 					aload_0;
 					sload_1;
 					putfield_b 9;		// byte aBus/DateByte.day

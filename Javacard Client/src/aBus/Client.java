@@ -29,6 +29,8 @@ public class Client {
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
     final static byte SW_INVALID_AMOUNT = (byte) 0x6304;
+    final static byte SW_INVALID_PIN = (byte) 0x6305;
+    final static byte SW_INVALID_PUK = (byte) 0x6306;
     
     //Constantes de status word error for lifecycle
 	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
@@ -36,7 +38,11 @@ public class Client {
 	public static final short SW_CARD_BLOCKED = 0x6402;
 	public static final short SW_CARD_DEAD = 0x6403;
 	public static final short SW_CARD_ALREADY_UNLOCK = 0x6404;
-    
+	
+	//Arguments
+	public static final short P1_VERIFY_PIN = (byte)0x01;
+	public static final short P1_RELOAD = (byte)0x02;
+	
 	public static void errorManager(Apdu apdu, CadT1Client cad) throws IOException, CadTransportException{
 		switch (apdu.getStatus()) {
 		case SW_TRAVEL_TIME_EXPIRED:
@@ -67,6 +73,12 @@ public class Client {
 		break;
 		case SW_INVALID_AMOUNT:
 			System.out.println("Le montant doit être compris entre 0 et 5.");
+		break;
+		case SW_INVALID_PIN:
+			System.out.println("Code PIN invalide.");
+		break;
+		case SW_INVALID_PUK:
+			System.out.println("Code PUK invalide.");
 		break;
 		default:
 			System.out.println("Erreur : status word different de 0x9000");
@@ -169,24 +181,37 @@ public class Client {
 					}
 				break;
 				case '2':
-					apdu.command[Apdu.INS] = Client.INS_RELOAD_CARD;
+					apdu.command[Apdu.INS] = INS_RELOAD_CARD;
+					apdu.command[Apdu.P1] = P1_VERIFY_PIN;
 					cad.exchangeApdu(apdu);
-					System.out.println("Saisir un montant :");
-					byte amount = clavier.nextByte();
-					try {
-						byte[] data = {amount};
-						apdu.setDataIn(data);
-						cad.exchangeApdu(apdu);
-					} catch (Exception e) {
-						System.out.println("Erreur: Impossible d'executer la commande");
-
-						return;
-					}
 					
+					System.out.println("Veuillez saisir votre code PIN caractère par caractère :");
+					byte p1 = clavier.nextByte();
+					byte p2 = clavier.nextByte();
+					byte p3 = clavier.nextByte();
+					byte p4 = clavier.nextByte();
+					byte[] cPin = {p1,p2,p3,p4};
+					apdu.setDataIn(cPin);
+					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() != 0x9000) {
 						errorManager(apdu, cad);
-					} else {
-						System.out.println("Votre carte a bien été rechergée !");
+					}else {
+						apdu.command[Apdu.P1] = P1_RELOAD;
+						System.out.println("Saisir un montant :");
+						byte amount = clavier.nextByte();
+						try {
+							byte[] data = {amount};
+							apdu.setDataIn(data);
+							cad.exchangeApdu(apdu);
+						} catch (Exception e) {
+							System.out.println("Erreur: Impossible d'executer la commande");
+							return;
+						}
+						if (apdu.getStatus() != 0x9000) {
+							errorManager(apdu, cad);
+						} else {
+							System.out.println("Votre carte a bien été rechergée !");
+						}
 					}
 				break;	
 				case '3':

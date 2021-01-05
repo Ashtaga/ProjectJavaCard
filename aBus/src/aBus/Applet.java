@@ -26,6 +26,8 @@ public class Applet extends javacard.framework.Applet {
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
     final static byte SW_INVALID_AMOUNT = (byte) 0x6304;
+    final static byte SW_INVALID_PIN = (byte) 0x6305;
+    final static byte SW_INVALID_PUK = (byte) 0x6306;
     
  // Constantes de status word error for lifecycle
 	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
@@ -40,6 +42,10 @@ public class Applet extends javacard.framework.Applet {
  	public static final byte BLOCKED = (byte) 0x02;
  	public static final byte DEAD = (byte) 0x03;
     
+ 	//Arguments
+	public static final short P1_VERIFY_PIN = (byte)0x01;
+	public static final short P1_RELOAD = (byte)0x02;
+ 		
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
     final static byte MAX_SIZE_RELOADING_AMOUNT = (byte) 0x05;//5
@@ -147,13 +153,31 @@ public class Applet extends javacard.framework.Applet {
 				    		ISOException.throwIt(SW_CARD_BLOCKED);
 				    	}else {
 				    		apdu.setIncomingAndReceive();
-				    		short amount = buffer[ISO7816.OFFSET_CDATA];
-				    		if(amount < MAX_SIZE_RELOADING_AMOUNT && amount > 0) {
-				    			balance += (byte)(amount);
-				    			apdu.setOutgoingAndSend((short) 0, (short) 0);
-				    		}else {
-				    			ISOException.throwIt(SW_INVALID_AMOUNT);
-				    		}
+				    		switch (buffer[ISO7816.OFFSET_P1]) {
+							case P1_VERIFY_PIN:
+								byte[] checkpin = {
+					    			buffer[ISO7816.OFFSET_CDATA],
+					    			buffer[ISO7816.OFFSET_CDATA + 1],
+					    			buffer[ISO7816.OFFSET_CDATA + 2],
+					    			buffer[ISO7816.OFFSET_CDATA + 3],
+					    		};
+								PIN.check(checkpin, (short)0, (byte)4);
+								if(PIN.isValidated()) {
+									apdu.setOutgoingAndSend((short) 0, (short) 0);
+								}else {
+									ISOException.throwIt(SW_INVALID_PIN);
+								}
+							break;
+							case P1_RELOAD:
+								short amount = buffer[ISO7816.OFFSET_CDATA];
+					    		if(amount < MAX_SIZE_RELOADING_AMOUNT && amount > 0) {
+					    			balance += (byte)(amount);
+					    			apdu.setOutgoingAndSend((short) 0, (short) 0);
+					    		}else {
+					    			ISOException.throwIt(SW_INVALID_AMOUNT);
+					    		}
+							break;
+				    	}
 				    	}
 				    break;
 				    case INS_CONSULT_CARD: 
@@ -167,6 +191,7 @@ public class Applet extends javacard.framework.Applet {
 				    	}
 					break;
 				    case INS_UNLOCK_PIN: 
+				    	
 				    	if(lifeCycleState == PRE_PERSO) {
 				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
 				    	}else if(lifeCycleState == USE) {
