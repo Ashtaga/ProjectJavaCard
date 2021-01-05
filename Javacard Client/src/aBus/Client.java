@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 import com.sun.javacard.apduio.Apdu;
 import com.sun.javacard.apduio.CadT1Client;
@@ -27,6 +28,7 @@ public class Client {
     final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
+    final static byte SW_INVALID_AMOUNT = (byte) 0x6304;
     
     //Constantes de status word error for lifecycle
 	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
@@ -63,6 +65,9 @@ public class Client {
 		case SW_CARD_ALREADY_UNLOCK:
 			System.out.println("La carte n'est pas verouillée.");
 		break;
+		case SW_INVALID_AMOUNT:
+			System.out.println("Le montant doit être compris entre 0 et 5.");
+		break;
 		default:
 			System.out.println("Erreur : status word different de 0x9000");
 		}
@@ -87,7 +92,7 @@ public class Client {
 		
 		 /* Sélection de l'applet */
 		Apdu apdu = new Apdu();
-		
+		Scanner clavier = new Scanner(System.in);
 		/* Menu principal */
 		boolean fin = false;
 		while (!fin) {
@@ -154,10 +159,22 @@ public class Client {
 				case '2':
 					apdu.command[Apdu.INS] = Client.INS_RELOAD_CARD;
 					cad.exchangeApdu(apdu);
+					System.out.println("Saisir un montant :");
+					byte amount = clavier.nextByte();
+					try {
+						byte[] data = {amount};
+						apdu.setDataIn(data);
+						cad.exchangeApdu(apdu);
+					} catch (Exception e) {
+						System.out.println("Erreur: Impossible d'executer la commande");
+
+						return;
+					}
+					
 					if (apdu.getStatus() != 0x9000) {
 						errorManager(apdu, cad);
 					} else {
-	
+						System.out.println("Votre carte a bien été rechergée !");
 					}
 				break;	
 				case '3':
