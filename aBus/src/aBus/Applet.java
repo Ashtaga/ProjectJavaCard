@@ -105,17 +105,17 @@ public class Applet extends javacard.framework.Applet {
 						//Voyage non valide
 						if(balance > ((byte)0x00)) {
 							apdu.setIncomingAndReceive();
-							short a = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
-							short b = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
-							short c = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
-							short d = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
-							short e = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
-							short f = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							byte a = buffer[ISO7816.OFFSET_CDATA];
+							byte b = buffer[ISO7816.OFFSET_CDATA + 1];
+							byte c = buffer[ISO7816.OFFSET_CDATA + 2];
+							byte d = buffer[ISO7816.OFFSET_CDATA + 3];
+							byte e = buffer[ISO7816.OFFSET_CDATA + 4];
+							byte f = buffer[ISO7816.OFFSET_CDATA + 5];
 							//--balance;
 							//TODO: Update Date and Time
-							balance = (byte)(a & 0xff);
-							lastTravelDate.update((byte)0x00,(byte)0x00,(short)0x00);
-							lastTravelTime = 0x628;
+							balance = (byte)(b);
+							lastTravelDate.update((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
+							lastTravelTime = (short)(((e) << 8) | (f & 0xFF));
 						}else{
 							ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
 						}

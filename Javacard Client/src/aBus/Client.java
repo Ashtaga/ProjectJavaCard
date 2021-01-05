@@ -73,18 +73,17 @@ public class Client {
 			
 			switch (choix) {
 				case '1':
-					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;					
-					byte[] data = new byte[6];
-					data[0] = (byte)(calendar.get(Calendar.DAY_OF_MONTH));
-					data[1] = (byte)(calendar.get(Calendar.MONTH));
-					
+					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;			
 					short year = (short) (calendar.get(Calendar.YEAR));
-					data[2] = (byte)(year & 0xff);
-					data[3] = (byte)((year >> 8) & 0xff);
-					
 					short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
-					data[4] = (byte)(time & 0xff);
-					data[5] = (byte)((time >> 8) & 0xff);
+					byte[] data = {
+						(byte)(calendar.get(Calendar.DAY_OF_MONTH)),
+						(byte)(calendar.get(Calendar.MONTH) + 1),
+						(byte)(year & 0xff),
+						(byte)((year >> 8) & 0xff),
+						(byte)(time & 0xff),
+						(byte)((time >> 8) & 0xff)
+					};
 					apdu.setDataIn(data);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() != 0x9000) {
