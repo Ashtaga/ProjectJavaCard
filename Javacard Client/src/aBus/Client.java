@@ -85,7 +85,6 @@ public class Client {
 				(byte)(time & 0xff),
 				(byte)((time >> 8) & 0xff)
 			};
-			
 			switch (choix) {
 				case '1':
 					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;			
@@ -133,7 +132,7 @@ public class Client {
 					if (apdu.getStatus() == SW_TRAVEL_TIME_EXPIRED) {
 						apdu.command[Apdu.INS] = Client.INS_GET_TIME_EXPIRED;
 						cad.exchangeApdu(apdu);
-						System.out.println("Validité du voyage terminée ! " + (short)(((apdu.dataOut[0]) << 8) | (apdu.dataOut[1] & 0xFF)));
+						System.out.println("Validité du voyage terminée !\nTicket expiré depuis  " + (short)(((apdu.dataOut[1]) << 8) | (apdu.dataOut[0] & 0xFF)) +" minute(s) !" );
 					} else if (apdu.getStatus() != 0x9000) {
 						System.out.println("Erreur : status word different de 0x9000");
 					}else {

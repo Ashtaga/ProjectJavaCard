@@ -84,17 +84,20 @@ public class Applet extends javacard.framework.Applet {
     	if(db.getYear() == lastTravelDate.getYear() && db.getMonth() == lastTravelDate.getMonth() && db.getDay() == lastTravelDate.getDay()) {
     		res = (short)(hour - lastTravelTime);
     	}else if(db.getYear() == lastTravelDate.getYear() && db.getMonth() == lastTravelDate.getMonth() && db.getDay() != lastTravelDate.getDay() ){
-    		byte nbDay = (byte)(db.getDay() - lastTravelDate.getDay());
+    		byte nbDay = (byte)(db.getDay() - lastTravelDate.getDay() - 1);
     		short nbMinute = (short)(nbDay * 24 * 60);
-    		res = (short)(1440 - lastTravelTime + hour + nbMinute);
+    		res = (short)( (1440 - lastTravelTime) + hour + nbMinute);
     	}else if(db.getYear() == lastTravelDate.getYear() && db.getMonth() != lastTravelDate.getMonth()){
     		byte nbMonth = (byte)(db.getMonth() - lastTravelDate.getMonth());
-    		short nbDay = (short)(31 - lastTravelDate.getDay() + db.getDay() + (nbMonth - 1) * 31);
-    		res = (short)(1440 - lastTravelTime + hour + nbDay * 24 * 60);
+    		short nbDay = (short)((31 - lastTravelDate.getDay()) + db.getDay() + (nbMonth -1) * 31);
+    		res = (short)( lastTravelTime + hour + nbDay * 24 * 60);
     	}else {
     		byte nbYear = (byte)(db.getYear() - lastTravelDate.getYear());
-    		short nbDay = (short)(31 - lastTravelDate.getDay() + db.getDay() + (12 - lastTravelDate.getMonth() + db.getMonth()) * 31 + (nbYear - 1)* 12 * 31);
-    		res = (short)(1440 - lastTravelTime + hour + nbDay * 24 * 60);
+    		short nbDay = (short)(31 - lastTravelDate.getDay() + db.getDay() +  (12 - lastTravelDate.getMonth() + db.getMonth() - 1) * 31 + (nbYear - 1)* 12 * 31);
+    		res = (short)(lastTravelTime + hour + nbDay * 24 * 60);
+    	}
+    	if(res < 0) {//Depassement du short
+    		res = (short)32766;//Valeur max
     	}
     	return res;
     }
@@ -111,8 +114,8 @@ public class Applet extends javacard.framework.Applet {
 					byte d = buffer[ISO7816.OFFSET_CDATA + 3];
 					byte e = buffer[ISO7816.OFFSET_CDATA + 4];
 					byte f = buffer[ISO7816.OFFSET_CDATA + 5];
-					DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
-					short buyHour = (short)(((e) << 8) | (f & 0xFF));
+					DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
+					short buyHour = (short)(((f) << 8) | (e & 0xFF));
 					if(getLastTravelDateInMinute(buyDate, buyHour)< TRAVEL_VALIDITY_TIME ) {
 						ISOException.throwIt(TRAVEL_VALIDITY_TIME);
 						//TODO: Detecter si changement de ligne + envoyer message
@@ -143,9 +146,9 @@ public class Applet extends javacard.framework.Applet {
 					d = buffer[ISO7816.OFFSET_CDATA + 3];
 					e = buffer[ISO7816.OFFSET_CDATA + 4];
 					f = buffer[ISO7816.OFFSET_CDATA + 5];
-					controlDate = new DateByte((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
-					controlHour = (short)(((e) << 8) | (f & 0xFF));
-					validity = (short)(getLastTravelDateInMinute(controlDate, controlHour) - 60);
+					controlDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
+					controlHour = (short)(((f) << 8) | (e & 0xFF));
+					validity = (short)(getLastTravelDateInMinute(controlDate, controlHour));
 					if(validity > TRAVEL_VALIDITY_TIME ) {
 						ISOException.throwIt(SW_TRAVEL_TIME_EXPIRED);
 					}

@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Tue Jan 05 14:57:36 CET 2021
+// on Tue Jan 05 16:32:06 CET 2021
 
 .package aBus {
 	.aid 0x1:0x2:0x3:0x4:0x5:0x6:0x7:0x8:0x9:0x0;
@@ -203,6 +203,8 @@
 					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
 					invokevirtual 11;		// getDay()B
 					ssub;
+					sconst_1;
+					ssub;
 					s2b;
 					sstore 4;
 					sload 4;
@@ -251,9 +253,7 @@
 					smul;
 					sadd;
 					sstore 5;
-					sspush 1440;
 					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
-					ssub;
 					sload_2;
 					sadd;
 					sload 5;
@@ -285,6 +285,8 @@
 					aload_1;
 					invokevirtual 10;		// getMonth()B
 					sadd;
+					sconst_1;
+					ssub;
 					bspush 31;
 					smul;
 					sadd;
@@ -297,9 +299,7 @@
 					smul;
 					sadd;
 					sstore 5;
-					sspush 1440;
 					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
-					ssub;
 					sload_2;
 					sadd;
 					sload 5;
@@ -310,11 +310,15 @@
 					sadd;
 					sstore_3;
 				L12:	sload_3;
+					ifge L14;
+				L13:	sspush 32766;
+					sstore_3;
+				L14:	sload_3;
 					sreturn;
 		}
 
 		.method public process(Ljavacard/framework/APDU;)V 7 {
-			.stack 8;
+			.stack 7;
 			.locals 9;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
@@ -362,21 +366,21 @@
 					dup;
 					sload_3;
 					sload 4;
-					sload 5;
+					sload 6;
 					sspush 255;
 					sand;
 					bspush 8;
 					sshl;
-					sload 6;
+					sload 5;
 					sspush 255;
 					sand;
 					sor;
 					invokespecial 18;		// aBus/DateByte.<init>(BBS)V
 					astore 9;
-					sload 7;
+					sload 8;
 					bspush 8;
 					sshl;
-					sload 8;
+					sload 7;
 					sspush 255;
 					sand;
 					sor;
@@ -450,35 +454,19 @@
 					aload_0;
 					new 20;		// aBus/DateByte
 					dup;
-					sload_3;
-					sload 4;
-					sload 5;
-					sspush 255;
-					sand;
-					bspush 8;
-					sshl;
-					sload 6;
-					sspush 255;
-					sand;
-					sor;
+					bspush 6;
+					sconst_2;
+					sspush 2021;
 					invokespecial 18;		// aBus/DateByte.<init>(BBS)V
 					putfield_a 3;		// reference aBus/Applet.controlDate
 					aload_0;
-					sload 7;
-					bspush 8;
-					sshl;
-					sload 8;
-					sspush 255;
-					sand;
-					sor;
+					sspush 240;
 					putfield_s 4;		// short aBus/Applet.controlHour
 					aload_0;
 					aload_0;
 					getfield_a_this 3;		// reference aBus/Applet.controlDate
 					getfield_s_this 4;		// short aBus/Applet.controlHour
 					invokespecial 14;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
-					bspush 60;
-					ssub;
 					putfield_s 5;		// short aBus/Applet.validity
 					getfield_s_this 5;		// short aBus/Applet.validity
 					bspush 60;
