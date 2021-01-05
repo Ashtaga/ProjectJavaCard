@@ -19,11 +19,24 @@ public class Applet extends javacard.framework.Applet {
     final static byte INS_CHECK_VALIDITY = (byte) 0x04;
     final static byte INS_CHECK_LOGS = (byte) 0x05;
     final static byte INS_GET_TIME_EXPIRED = (byte) 0x06;
+    final static byte INS_INITIALISE_CARD = (byte) 0x07;
     
     // Constantes de status word error
     final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
+    
+ // Constantes de status word error for lifecycle
+	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
+	public static final short SW_CARD_NOT_INITIALIZED = 0x6401;
+	public static final short SW_CARD_BLOCKED = 0x6402;
+	public static final short SW_CARD_DEAD = 0x6403;
+    
+ // For the lifeCycleState
+ 	public static final byte PRE_PERSO = (byte) 0x00;
+ 	public static final byte USE = (byte) 0x01;
+ 	public static final byte BLOCKED = (byte) 0x02;
+ 	public static final byte DEAD = (byte) 0x03;
     
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
@@ -36,6 +49,7 @@ public class Applet extends javacard.framework.Applet {
     final static byte PUK_TRY_LIMIT = (byte) 0x03;
     final static byte MAX_PUK_SIZE = (byte) 0x06;
     
+    private byte lifeCycleState;
     private byte balance;
     private OwnerPIN PIN;
     private OwnerPIN PUK;

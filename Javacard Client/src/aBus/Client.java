@@ -13,17 +13,26 @@ import com.sun.javacard.apduio.CadTransportException;
 
 public class Client {
 
-	final static byte INS_BUY_TRAVEL = (byte) 0x00;
+	// Une constante par INS, c'est ï¿½ dire par commande
+    final static byte INS_BUY_TRAVEL = (byte) 0x00;
     final static byte INS_RELOAD_CARD = (byte) 0x01;
     final static byte INS_CONSULT_CARD = (byte) 0x02;
     final static byte INS_UNLOCK_PIN = (byte) 0x03;
     final static byte INS_CHECK_VALIDITY = (byte) 0x04;
     final static byte INS_CHECK_LOGS = (byte) 0x05;
     final static byte INS_GET_TIME_EXPIRED = (byte) 0x06;
+    final static byte INS_INITIALISE_CARD = (byte) 0x07;
     
+    // Constantes de status word error
     final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
+    
+    //Constantes de status word error for lifecycle
+	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
+	public static final short SW_CARD_NOT_INITIALIZED = 0x6401;
+	public static final short SW_CARD_BLOCKED = 0x6402;
+	public static final short SW_CARD_DEAD = 0x6403;
     
 	public static void main(String[] args) throws IOException, CadTransportException {
 		/* Connexion a la Javacard */
@@ -42,7 +51,7 @@ public class Client {
 		}
 		
 		
-		 /* Sélection de l'applet */
+		 /* SÃ©lection de l'applet */
 		Apdu apdu = new Apdu();
 		
 		/* Menu principal */
@@ -55,8 +64,8 @@ public class Client {
 			System.out.println("1 - Valider son voyage");
 			System.out.println("2 - Recharger la carte");
 			System.out.println("3 - Consulter la carte");
-			System.out.println("4 - Débloquer le code PIN");
-			System.out.println("5 - Vérifier la validité");
+			System.out.println("4 - DÃ©bloquer le code PIN");
+			System.out.println("5 - VÃ©rifier la validitÃ©");
 			System.out.println("6 - Consulter l'historique");
 			System.out.println("7 - Quitter");
 			System.out.println();
@@ -91,11 +100,11 @@ public class Client {
 					apdu.setDataIn(dateData);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
-						System.out.println("Trajet validé !");
+						System.out.println("Trajet validÃ© !");
 					}else if(apdu.getStatus() == SW_INSUFFICIENT_BALANCE_ERROR) {
 						System.out.println("Vous n'avez plus de voyage !\nMerci de recharger votre carte...");
 					}else if(apdu.getStatus() == SW_TRAVEL_ALREADY_VALIDATED) {
-						System.out.println("Vous avez déjà validé votre carte !");
+						System.out.println("Vous avez dÃ©jÃ  validÃ© votre carte !");
 					}else{
 						System.out.println("Erreur : status word different de 0x9000");
 					}
@@ -134,11 +143,11 @@ public class Client {
 					if (apdu.getStatus() == SW_TRAVEL_TIME_EXPIRED) {
 						apdu.command[Apdu.INS] = Client.INS_GET_TIME_EXPIRED;
 						cad.exchangeApdu(apdu);
-						System.out.println("Validité du voyage terminée !\nTicket expiré depuis " + (short)((((apdu.dataOut[1]) << 8) | (apdu.dataOut[0] & 0xFF)) - (short)(apdu.dataOut[2])) +" minute(s) !" );
+						System.out.println("ValiditÃ© du voyage terminÃ©e !\nTicket expirÃ© depuis " + (short)((((apdu.dataOut[1]) << 8) | (apdu.dataOut[0] & 0xFF)) - (short)(apdu.dataOut[2])) +" minute(s) !" );
 					} else if (apdu.getStatus() != 0x9000) {
 						System.out.println("Erreur : status word different de 0x9000");
 					}else {
-						System.out.println("Carte validé !");
+						System.out.println("Carte validÃ© !");
 					}
 					
 				break;	
