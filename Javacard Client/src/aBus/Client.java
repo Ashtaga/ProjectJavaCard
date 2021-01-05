@@ -139,8 +139,20 @@ public class Client {
 					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
-						//TODO: Faire le processus d'initialisation PIN + PUK
-						
+						int pin1 = (int)(Math.random() * 10);
+						int pin2 = (int)(Math.random() * 10);
+						int pin3 = (int)(Math.random() * 10);
+						int pin4 = (int)(Math.random() * 10);
+						int puk1 = (int)(Math.random() * 10);
+						int puk2 = (int)(Math.random() * 10);
+						int puk3 = (int)(Math.random() * 10);
+						int puk4 = (int)(Math.random() * 10);
+						byte[] data = {
+							(byte)pin1,(byte)pin2,(byte)pin3,(byte)pin4, //Code PIN
+							(byte)puk1,(byte)puk2,(byte)puk3,(byte)puk4 //Code PUK
+						};
+						System.out.println("Votre code PIN est : " +pin1 +""+pin2+""+pin3+""+pin4);
+						System.out.println("Votre code PUK est : " +puk1 +""+puk2+""+puk3+""+puk4);
 						System.out.println("Carte intialisé !");
 					}else {
 						errorManager(apdu, cad);

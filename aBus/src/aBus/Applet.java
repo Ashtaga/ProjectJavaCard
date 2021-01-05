@@ -46,10 +46,10 @@ public class Applet extends javacard.framework.Applet {
     final static byte TRAVEL_VALIDITY_TIME = (byte)0x3C;//60
     
     final static byte PIN_TRY_LIMIT = (byte) 0x03;
-    final static byte MAX_PIN_SIZE = (byte) 0x06;
+    final static byte MAX_PIN_SIZE = (byte) 0x04;
     
     final static byte PUK_TRY_LIMIT = (byte) 0x03;
-    final static byte MAX_PUK_SIZE = (byte) 0x06;
+    final static byte MAX_PUK_SIZE = (byte) 0x04;
     
     private byte lifeCycleState;
     private byte balance;
@@ -63,22 +63,9 @@ public class Applet extends javacard.framework.Applet {
     
 
     private Applet(byte[] bArray, short bOffset, byte bLength) {
-        /*PIN = new OwnerPIN(PIN_TRY_LIMIT, MAX_PIN_SIZE);
+        PIN = new OwnerPIN(PIN_TRY_LIMIT, MAX_PIN_SIZE);
         PUK = new OwnerPIN(PUK_TRY_LIMIT, MAX_PUK_SIZE);
-        //TODO: Generation code PIN + PUK
-        byte iLen = bArray[bOffset];
-        bOffset = (short) (bOffset + iLen + 1);
-        byte cLen = bArray[bOffset];
-        bOffset = (short) (bOffset + cLen + 1);
-        byte aLen = bArray[bOffset];
-        PIN.update(bArray, (short) (bOffset + 1), aLen);
-        
-        iLen = bArray[bOffset];
-        bOffset = (short) (bOffset + iLen + 1);
-        cLen = bArray[bOffset];
-        bOffset = (short) (bOffset + cLen + 1);
-        aLen = bArray[bOffset];
-        PUK.update(bArray, (short) (bOffset + 1), aLen);*/
+
     	lifeCycleState = PRE_PERSO;
         balance = 0x00;
         lastTravelDate = new DateByte((byte)0x01,(byte)0x01,(short)2021);
@@ -226,7 +213,22 @@ public class Applet extends javacard.framework.Applet {
 					break;
 				    case INS_INITIALISE_CARD: 
 				    	if(lifeCycleState == PRE_PERSO) {
-				    		//TODO: Init code PIN + PUK;
+				    		byte[] cpin = {
+				    			buffer[ISO7816.OFFSET_CDATA],
+				    			buffer[ISO7816.OFFSET_CDATA + 1],
+				    			buffer[ISO7816.OFFSET_CDATA + 2],
+				    			buffer[ISO7816.OFFSET_CDATA + 3],
+				    		};
+							PIN.update(cpin, (short)0, (byte)4);
+							
+							byte[] cpuk = {
+					    			buffer[ISO7816.OFFSET_CDATA + 4],
+					    			buffer[ISO7816.OFFSET_CDATA + 5],
+					    			buffer[ISO7816.OFFSET_CDATA + 6],
+					    			buffer[ISO7816.OFFSET_CDATA + 7],
+				    		};
+							PUK.update(cpuk, (short)0, (byte)4);
+
 				    		lifeCycleState = USE;
 				    		apdu.setOutgoingAndSend((short) 0, (short) 0);
 				    	}else {
