@@ -107,7 +107,7 @@ public class Client {
 			System.out.println("Votre choix ?");
 
 			int choix = System.in.read();
-			while (!(choix >= '1' && choix <= '7')) {
+			while (!(choix >= '0' && choix <= '7')) {
 				choix = System.in.read();
 			}
 			
@@ -131,7 +131,6 @@ public class Client {
 			};
 			switch (choix) {
 				case '0':
-					System.out.println("Carazeazeaeaalisé !");
 					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
