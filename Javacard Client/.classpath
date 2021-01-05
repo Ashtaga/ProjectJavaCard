@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/user/eclipse/javacard/lib/apduio.jar"/>
+	<classpathentry kind="lib" path="D:/Cours/SecuAPP/tools/javacard/jcdk/lib/apduio.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
