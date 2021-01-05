@@ -132,7 +132,7 @@ public class Client {
 					if (apdu.getStatus() == SW_TRAVEL_TIME_EXPIRED) {
 						apdu.command[Apdu.INS] = Client.INS_GET_TIME_EXPIRED;
 						cad.exchangeApdu(apdu);
-						System.out.println("Validité du voyage terminée !\nTicket expiré depuis  " + (short)(((apdu.dataOut[1]) << 8) | (apdu.dataOut[0] & 0xFF)) +" minute(s) !" );
+						System.out.println("Validité du voyage terminée !\nTicket expiré depuis  " + (short)((((apdu.dataOut[1]) << 8) | (apdu.dataOut[0] & 0xFF)) - (short)(apdu.dataOut[2])) +" minute(s) !" );
 					} else if (apdu.getStatus() != 0x9000) {
 						System.out.println("Erreur : status word different de 0x9000");
 					}else {

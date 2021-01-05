@@ -28,7 +28,7 @@ public class Applet extends javacard.framework.Applet {
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
     final static byte MAX_SIZE_RELOADING_AMOUNT = (byte) 0x05;//5
-    final static byte TRAVEL_VALIDITY_TIME = (byte) 0x3C;//60
+    final static byte TRAVEL_VALIDITY_TIME = (byte)1;//0x3C;//60
     
     final static byte PIN_TRY_LIMIT = (byte) 0x03;
     final static byte MAX_PIN_SIZE = (byte) 0x06;
@@ -158,7 +158,8 @@ public class Applet extends javacard.framework.Applet {
 			    case INS_GET_TIME_EXPIRED: 
 			    	buffer[0] = (byte)(validity & 0xff);
 					buffer[1] = (byte)((validity >> 8) & 0xff);
-					apdu.setOutgoingAndSend((short) 0, (short) 2);
+					buffer[2] = (byte)TRAVEL_VALIDITY_TIME;
+					apdu.setOutgoingAndSend((short) 0, (short) 3);
 				break;
 			    default:
 			    	ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
