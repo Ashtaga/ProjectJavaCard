@@ -131,11 +131,13 @@ public class Client {
 			};
 			switch (choix) {
 				case '0':
+					System.out.println("Carazeazeaeaalisé !");
 					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
-					apdu.setDataIn(dateData);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
-
+						//TODO: Faire le processus d'initialisation PIN + PUK
+						
+						System.out.println("Carte intialisé !");
 					}else {
 						errorManager(apdu, cad);
 					}

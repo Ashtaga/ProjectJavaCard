@@ -220,6 +220,7 @@ public class Applet extends javacard.framework.Applet {
 				    	if(lifeCycleState == PRE_PERSO) {
 				    		//TODO: Init code PIN + PUK;
 				    		lifeCycleState = USE;
+				    		apdu.setOutgoingAndSend((short) 0, (short) 0);
 				    	}else {
 				    		ISOException.throwIt(SW_CARD_ALREADY_INITIALIZED);
 				    	}

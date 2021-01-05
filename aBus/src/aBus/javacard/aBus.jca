@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Tue Jan 05 17:47:07 CET 2021
+// on Tue Jan 05 18:13:19 CET 2021
 
 .package aBus {
 	.aid 0x1:0x2:0x3:0x4:0x5:0x6:0x7:0x8:0x9:0x0;
@@ -16,54 +16,56 @@
 
 	.constantPool {
 		// 0
-		instanceFieldRef byte Applet/balance;
+		instanceFieldRef byte Applet/lifeCycleState;
 		// 1
-		instanceFieldRef DateByte Applet/lastTravelDate;
+		instanceFieldRef byte Applet/balance;
 		// 2
-		instanceFieldRef short Applet/lastTravelTime;
+		instanceFieldRef DateByte Applet/lastTravelDate;
 		// 3
-		instanceFieldRef DateByte Applet/controlDate;
+		instanceFieldRef short Applet/lastTravelTime;
 		// 4
-		instanceFieldRef short Applet/controlHour;
+		instanceFieldRef DateByte Applet/controlDate;
 		// 5
-		instanceFieldRef short Applet/validity;
+		instanceFieldRef short Applet/controlHour;
 		// 6
-		instanceFieldRef byte DateByte/day;
+		instanceFieldRef short Applet/validity;
 		// 7
-		instanceFieldRef byte DateByte/month;
+		instanceFieldRef byte DateByte/day;
 		// 8
-		instanceFieldRef short DateByte/year;
+		instanceFieldRef byte DateByte/month;
 		// 9
-		virtualMethodRef DateByte/getYear()S;
+		instanceFieldRef short DateByte/year;
 		// 10
-		virtualMethodRef DateByte/getMonth()B;
+		virtualMethodRef DateByte/getYear()S;
 		// 11
-		virtualMethodRef DateByte/getDay()B;
+		virtualMethodRef DateByte/getMonth()B;
 		// 12
-		virtualMethodRef 0.10.1()[B;		// getBuffer()[B
+		virtualMethodRef DateByte/getDay()B;
 		// 13
-		virtualMethodRef 0.10.6()S;		// setIncomingAndReceive()S
+		virtualMethodRef 0.10.1()[B;		// getBuffer()[B
 		// 14
-		staticMethodRef Applet/getLastTravelDateInMinute(LaBus/DateByte;S)S;
+		virtualMethodRef 0.10.6()S;		// setIncomingAndReceive()S
 		// 15
 		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
 		// 16
-		virtualMethodRef DateByte/update(LaBus/DateByte;)V;
+		staticMethodRef Applet/getLastTravelDateInMinute(LaBus/DateByte;S)S;
 		// 17
-		virtualMethodRef 0.10.8(SS)V;		// setOutgoingAndSend(SS)V
+		virtualMethodRef DateByte/update(LaBus/DateByte;)V;
 		// 18
-		staticMethodRef DateByte/<init>(BBS)V;
+		virtualMethodRef 0.10.8(SS)V;		// setOutgoingAndSend(SS)V
 		// 19
-		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		staticMethodRef DateByte/<init>(BBS)V;
 		// 20
-		classRef DateByte;
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
 		// 21
-		staticMethodRef 1.0.0()V;		// java/lang/Object.<init>()V
+		classRef DateByte;
 		// 22
-		virtualMethodRef 0.3.1()V;		// register()V
+		staticMethodRef 1.0.0()V;		// java/lang/Object.<init>()V
 		// 23
-		classRef Applet;
+		virtualMethodRef 0.3.1()V;		// register()V
 		// 24
+		classRef Applet;
+		// 25
 		staticMethodRef Applet/<init>([BSB)V;
 	}
 
@@ -83,6 +85,7 @@
 			public static final short SW_CARD_NOT_INITIALIZED = 25601;		// S
 			public static final short SW_CARD_BLOCKED = 25602;		// S
 			public static final short SW_CARD_DEAD = 25603;		// S
+			public static final short SW_CARD_ALREADY_UNLOCK = 25604;		// S
 			public static final byte PRE_PERSO = 0;		// B
 			public static final byte USE = 1;		// B
 			public static final byte BLOCKED = 2;		// B
@@ -127,23 +130,26 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 19;		// javacard/framework/Applet.<init>()V
+					invokespecial 20;		// javacard/framework/Applet.<init>()V
+					aload_0;
+					sconst_0;
+					putfield_b 0;		// byte aBus/Applet.lifeCycleState
 					aload_0;
 					sconst_1;
-					putfield_b 0;		// byte aBus/Applet.balance
+					putfield_b 1;		// byte aBus/Applet.balance
 					aload_0;
-					new 20;		// aBus/DateByte
+					new 21;		// aBus/DateByte
 					dup;
 					sconst_1;
 					sconst_1;
 					sspush 2021;
-					invokespecial 18;		// aBus/DateByte.<init>(BBS)V
-					putfield_a 1;		// reference aBus/Applet.lastTravelDate
+					invokespecial 19;		// aBus/DateByte.<init>(BBS)V
+					putfield_a 2;		// reference aBus/Applet.lastTravelDate
 					aload_0;
 					sconst_0;
-					putfield_s 2;		// short aBus/Applet.lastTravelTime
+					putfield_s 3;		// short aBus/Applet.lastTravelTime
 					aload_0;
-					invokevirtual 22;		// register()V
+					invokevirtual 23;		// register()V
 					return;
 		}
 
@@ -151,11 +157,11 @@
 			.stack 4;
 			.locals 0;
 
-				L0:	new 23;		// aBus/Applet
+				L0:	new 24;		// aBus/Applet
 					aload_0;
 					sload_1;
 					sload_2;
-					invokespecial 24;		// aBus/Applet.<init>([BSB)V
+					invokespecial 25;		// aBus/Applet.<init>([BSB)V
 					return;
 		}
 
@@ -174,44 +180,44 @@
 				L0:	sconst_0;
 					sstore_3;
 					aload_1;
-					invokevirtual 9;		// getYear()S
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 9;		// getYear()S
+					invokevirtual 10;		// getYear()S
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 10;		// getYear()S
 					if_scmpne L4;
 				L1:	aload_1;
-					invokevirtual 10;		// getMonth()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 10;		// getMonth()B
+					invokevirtual 11;		// getMonth()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 11;		// getMonth()B
 					if_scmpne L4;
 				L2:	aload_1;
-					invokevirtual 11;		// getDay()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 11;		// getDay()B
+					invokevirtual 12;		// getDay()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 12;		// getDay()B
 					if_scmpne L4;
 				L3:	sload_2;
-					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
+					getfield_s_this 3;		// short aBus/Applet.lastTravelTime
 					ssub;
 					sstore_3;
 					goto_w L12;
 				L4:	aload_1;
-					invokevirtual 9;		// getYear()S
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 9;		// getYear()S
+					invokevirtual 10;		// getYear()S
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 10;		// getYear()S
 					if_scmpne L8;
 				L5:	aload_1;
-					invokevirtual 10;		// getMonth()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 10;		// getMonth()B
+					invokevirtual 11;		// getMonth()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 11;		// getMonth()B
 					if_scmpne L8;
 				L6:	aload_1;
-					invokevirtual 11;		// getDay()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 11;		// getDay()B
+					invokevirtual 12;		// getDay()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 12;		// getDay()B
 					if_scmpeq L8;
 				L7:	aload_1;
-					invokevirtual 11;		// getDay()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 11;		// getDay()B
+					invokevirtual 12;		// getDay()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 12;		// getDay()B
 					ssub;
 					sconst_1;
 					ssub;
@@ -224,7 +230,7 @@
 					smul;
 					sstore 5;
 					sspush 1440;
-					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
+					getfield_s_this 3;		// short aBus/Applet.lastTravelTime
 					ssub;
 					sload_2;
 					sadd;
@@ -233,28 +239,28 @@
 					sstore_3;
 					goto_w L12;
 				L8:	aload_1;
-					invokevirtual 9;		// getYear()S
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 9;		// getYear()S
+					invokevirtual 10;		// getYear()S
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 10;		// getYear()S
 					if_scmpne L11;
 				L9:	aload_1;
-					invokevirtual 10;		// getMonth()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 10;		// getMonth()B
+					invokevirtual 11;		// getMonth()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 11;		// getMonth()B
 					if_scmpeq L11;
 				L10:	aload_1;
-					invokevirtual 10;		// getMonth()B
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 10;		// getMonth()B
+					invokevirtual 11;		// getMonth()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 11;		// getMonth()B
 					ssub;
 					s2b;
 					sstore 4;
 					bspush 31;
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 11;		// getDay()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 12;		// getDay()B
 					ssub;
 					aload_1;
-					invokevirtual 11;		// getDay()B
+					invokevirtual 12;		// getDay()B
 					sadd;
 					sload 4;
 					sconst_1;
@@ -263,7 +269,7 @@
 					smul;
 					sadd;
 					sstore 5;
-					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
+					getfield_s_this 3;		// short aBus/Applet.lastTravelTime
 					sload_2;
 					sadd;
 					sload 5;
@@ -275,25 +281,25 @@
 					sstore_3;
 					goto L12;
 				L11:	aload_1;
-					invokevirtual 9;		// getYear()S
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 9;		// getYear()S
+					invokevirtual 10;		// getYear()S
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 10;		// getYear()S
 					ssub;
 					s2b;
 					sstore 4;
 					bspush 31;
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 11;		// getDay()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 12;		// getDay()B
 					ssub;
 					aload_1;
-					invokevirtual 11;		// getDay()B
+					invokevirtual 12;		// getDay()B
 					sadd;
 					bspush 12;
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
-					invokevirtual 10;		// getMonth()B
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
+					invokevirtual 11;		// getMonth()B
 					ssub;
 					aload_1;
-					invokevirtual 10;		// getMonth()B
+					invokevirtual 11;		// getMonth()B
 					sadd;
 					sconst_1;
 					ssub;
@@ -309,7 +315,7 @@
 					smul;
 					sadd;
 					sstore 5;
-					getfield_s_this 2;		// short aBus/Applet.lastTravelTime
+					getfield_s_this 3;		// short aBus/Applet.lastTravelTime
 					sload_2;
 					sadd;
 					sload 5;
@@ -334,19 +340,22 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_1;
-					invokevirtual 12;		// getBuffer()[B
+					invokevirtual 13;		// getBuffer()[B
 					astore_2;
 					aload_2;
 					sconst_0;
 					baload;
 					bspush 37;
-					if_scmpne_w L15;
-				L1:	aload_2;
+					if_scmpne_w L41;
+				L1:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_3;
+					if_scmpeq_w L40;
+				L2:	aload_2;
 					sconst_1;
 					baload;
-					stableswitch L14 0 6 L2 L7 L8 L9 L10 L12 L13;
-				L2:	aload_1;
-					invokevirtual 13;		// setIncomingAndReceive()S
+					stableswitch L39 0 7 L3 L12 L16 L21 L25 L31 L35 L36;
+				L3:	aload_1;
+					invokevirtual 14;		// setIncomingAndReceive()S
 					pop;
 					aload_2;
 					sconst_5;
@@ -372,7 +381,7 @@
 					bspush 10;
 					baload;
 					sstore 8;
-					new 20;		// aBus/DateByte
+					new 21;		// aBus/DateByte
 					dup;
 					sload_3;
 					sload 4;
@@ -385,7 +394,7 @@
 					sspush 255;
 					sand;
 					sor;
-					invokespecial 18;		// aBus/DateByte.<init>(BBS)V
+					invokespecial 19;		// aBus/DateByte.<init>(BBS)V
 					astore 9;
 					sload 8;
 					bspush 8;
@@ -395,47 +404,100 @@
 					sand;
 					sor;
 					sstore 10;
-					aload_0;
+					getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L5;
+				L4:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L5:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L7;
+				L6:	sspush 25602;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L7:	aload_0;
 					aload 9;
 					sload 10;
-					invokespecial 14;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
+					invokespecial 16;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
 					sconst_1;
-					if_scmpge L4;
-				L3:	sconst_2;
+					if_scmpge L9;
+				L8:	sconst_2;
 					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L16;
-				L4:	getfield_b_this 0;		// byte aBus/Applet.balance
-					ifle L6;
-				L5:	aload_0;
+					goto_w L42;
+				L9:	getfield_b_this 1;		// byte aBus/Applet.balance
+					ifle L11;
+				L10:	aload_0;
 					dup;
-					getfield_b 0;		// byte aBus/Applet.balance
+					getfield_b 1;		// byte aBus/Applet.balance
 					sconst_1;
 					ssub;
 					s2b;
-					putfield_b 0;		// byte aBus/Applet.balance
-					getfield_a_this 1;		// reference aBus/Applet.lastTravelDate
+					putfield_b 1;		// byte aBus/Applet.balance
+					getfield_a_this 2;		// reference aBus/Applet.lastTravelDate
 					aload 9;
-					invokevirtual 16;		// update(LaBus/DateByte;)V
+					invokevirtual 17;		// update(LaBus/DateByte;)V
 					aload_0;
 					sload 10;
-					putfield_s 2;		// short aBus/Applet.lastTravelTime
-					goto_w L16;
-				L6:	sconst_3;
+					putfield_s 3;		// short aBus/Applet.lastTravelTime
+					goto_w L42;
+				L11:	sconst_3;
 					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
-					goto_w L16;
-				L7:	goto_w L16;
-				L8:	aload_2;
+					goto_w L42;
+				L12:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L14;
+				L13:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L14:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne_w L42;
+				L15:	sspush 25602;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L16:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L18;
+				L17:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L18:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L20;
+				L19:	sspush 25602;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L20:	aload_2;
 					sconst_0;
-					getfield_b_this 0;		// byte aBus/Applet.balance
+					getfield_b_this 1;		// byte aBus/Applet.balance
 					bastore;
 					aload_1;
 					sconst_0;
 					sconst_1;
-					invokevirtual 17;		// setOutgoingAndSend(SS)V
-					goto_w L16;
-				L9:	goto_w L16;
-				L10:	aload_1;
-					invokevirtual 13;		// setIncomingAndReceive()S
+					invokevirtual 18;		// setOutgoingAndSend(SS)V
+					goto_w L42;
+				L21:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L23;
+				L22:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L23:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_1;
+					if_scmpne_w L42;
+				L24:	sspush 25604;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L25:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L27;
+				L26:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L27:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L29;
+				L28:	sspush 25602;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto_w L42;
+				L29:	aload_1;
+					invokevirtual 14;		// setIncomingAndReceive()S
 					pop;
 					aload_2;
 					sconst_5;
@@ -462,7 +524,7 @@
 					baload;
 					sstore 8;
 					aload_0;
-					new 20;		// aBus/DateByte
+					new 21;		// aBus/DateByte
 					dup;
 					sload_3;
 					sload 4;
@@ -475,8 +537,8 @@
 					sspush 255;
 					sand;
 					sor;
-					invokespecial 18;		// aBus/DateByte.<init>(BBS)V
-					putfield_a 3;		// reference aBus/Applet.controlDate
+					invokespecial 19;		// aBus/DateByte.<init>(BBS)V
+					putfield_a 4;		// reference aBus/Applet.controlDate
 					aload_0;
 					sload 8;
 					bspush 8;
@@ -485,30 +547,40 @@
 					sspush 255;
 					sand;
 					sor;
-					putfield_s 4;		// short aBus/Applet.controlHour
+					putfield_s 5;		// short aBus/Applet.controlHour
 					aload_0;
 					aload_0;
-					getfield_a_this 3;		// reference aBus/Applet.controlDate
-					getfield_s_this 4;		// short aBus/Applet.controlHour
-					invokespecial 14;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
-					putfield_s 5;		// short aBus/Applet.validity
-					getfield_s_this 5;		// short aBus/Applet.validity
+					getfield_a_this 4;		// reference aBus/Applet.controlDate
+					getfield_s_this 5;		// short aBus/Applet.controlHour
+					invokespecial 16;		// aBus/Applet.getLastTravelDateInMinute(LaBus/DateByte;S)S
+					putfield_s 6;		// short aBus/Applet.validity
+					getfield_s_this 6;		// short aBus/Applet.validity
 					sconst_1;
-					if_scmple L16;
-				L11:	sconst_1;
+					if_scmple L42;
+				L30:	sconst_1;
 					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
-					goto L16;
-				L12:	goto L16;
-				L13:	aload_2;
+					goto L42;
+				L31:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L33;
+				L32:	sspush 25601;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto L42;
+				L33:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					sconst_2;
+					if_scmpne L42;
+				L34:	sspush 25602;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto L42;
+				L35:	aload_2;
 					sconst_0;
-					getfield_s_this 5;		// short aBus/Applet.validity
+					getfield_s_this 6;		// short aBus/Applet.validity
 					sspush 255;
 					sand;
 					s2b;
 					bastore;
 					aload_2;
 					sconst_1;
-					getfield_s_this 5;		// short aBus/Applet.validity
+					getfield_s_this 6;		// short aBus/Applet.validity
 					bspush 8;
 					sshr;
 					sspush 255;
@@ -522,14 +594,30 @@
 					aload_1;
 					sconst_0;
 					sconst_3;
-					invokevirtual 17;		// setOutgoingAndSend(SS)V
-					goto L16;
-				L14:	sspush 27904;
+					invokevirtual 18;		// setOutgoingAndSend(SS)V
+					goto L42;
+				L36:	getfield_b_this 0;		// byte aBus/Applet.lifeCycleState
+					ifne L38;
+				L37:	aload_0;
+					sconst_1;
+					putfield_b 0;		// byte aBus/Applet.lifeCycleState
+					aload_1;
+					sconst_0;
+					sconst_0;
+					invokevirtual 18;		// setOutgoingAndSend(SS)V
+					goto L42;
+				L38:	sspush 25600;
 					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
-					goto L16;
-				L15:	sspush 28160;
+					goto L42;
+				L39:	sspush 27904;
 					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
-				L16:	return;
+					goto L42;
+				L40:	sspush 25603;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+					goto L42;
+				L41:	sspush 28160;
+					invokestatic 15;		// javacard/framework/ISOException.throwIt(S)V
+				L42:	return;
 		}
 
 	}
@@ -559,16 +647,16 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 21;		// java/lang/Object.<init>()V
+					invokespecial 22;		// java/lang/Object.<init>()V
 					aload_0;
 					sconst_0;
-					putfield_b 6;		// byte aBus/DateByte.day
+					putfield_b 7;		// byte aBus/DateByte.day
 					aload_0;
 					sconst_0;
-					putfield_b 7;		// byte aBus/DateByte.month
+					putfield_b 8;		// byte aBus/DateByte.month
 					aload_0;
 					sconst_0;
-					putfield_s 8;		// short aBus/DateByte.year
+					putfield_s 9;		// short aBus/DateByte.year
 					return;
 		}
 
@@ -577,16 +665,16 @@
 			.locals 0;
 
 				L0:	aload_0;
-					invokespecial 21;		// java/lang/Object.<init>()V
+					invokespecial 22;		// java/lang/Object.<init>()V
 					aload_0;
 					sload_1;
-					putfield_b 6;		// byte aBus/DateByte.day
+					putfield_b 7;		// byte aBus/DateByte.day
 					aload_0;
 					sload_2;
-					putfield_b 7;		// byte aBus/DateByte.month
+					putfield_b 8;		// byte aBus/DateByte.month
 					aload_0;
 					sload_3;
-					putfield_s 8;		// short aBus/DateByte.year
+					putfield_s 9;		// short aBus/DateByte.year
 					return;
 		}
 
@@ -594,7 +682,7 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	getfield_b_this 6;		// byte aBus/DateByte.day
+				L0:	getfield_b_this 7;		// byte aBus/DateByte.day
 					sreturn;
 		}
 
@@ -602,7 +690,7 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	getfield_b_this 7;		// byte aBus/DateByte.month
+				L0:	getfield_b_this 8;		// byte aBus/DateByte.month
 					sreturn;
 		}
 
@@ -610,7 +698,7 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	getfield_s_this 8;		// short aBus/DateByte.year
+				L0:	getfield_s_this 9;		// short aBus/DateByte.year
 					sreturn;
 		}
 
@@ -620,13 +708,13 @@
 
 				L0:	aload_0;
 					sload_1;
-					putfield_b 6;		// byte aBus/DateByte.day
+					putfield_b 7;		// byte aBus/DateByte.day
 					aload_0;
 					sload_2;
-					putfield_b 7;		// byte aBus/DateByte.month
+					putfield_b 8;		// byte aBus/DateByte.month
 					aload_0;
 					sload_3;
-					putfield_s 8;		// short aBus/DateByte.year
+					putfield_s 9;		// short aBus/DateByte.year
 					return;
 		}
 
@@ -636,16 +724,16 @@
 
 				L0:	aload_0;
 					aload_1;
-					invokevirtual 11;		// getDay()B
-					putfield_b 6;		// byte aBus/DateByte.day
+					invokevirtual 12;		// getDay()B
+					putfield_b 7;		// byte aBus/DateByte.day
 					aload_0;
 					aload_1;
-					invokevirtual 10;		// getMonth()B
-					putfield_b 7;		// byte aBus/DateByte.month
+					invokevirtual 11;		// getMonth()B
+					putfield_b 8;		// byte aBus/DateByte.month
 					aload_0;
 					aload_1;
-					invokevirtual 9;		// getYear()S
-					putfield_s 8;		// short aBus/DateByte.year
+					invokevirtual 10;		// getYear()S
+					putfield_s 9;		// short aBus/DateByte.year
 					return;
 		}
 
