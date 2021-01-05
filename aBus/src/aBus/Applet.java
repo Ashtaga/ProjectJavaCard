@@ -28,6 +28,7 @@ public class Applet extends javacard.framework.Applet {
     final static byte SW_INVALID_AMOUNT = (byte) 0x6304;
     final static byte SW_INVALID_PIN = (byte) 0x6305;
     final static byte SW_INVALID_PUK = (byte) 0x6306;
+    final static byte SW_BLOCKED_PIN = (byte) 0x6307;
     
  // Constantes de status word error for lifecycle
 	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
@@ -36,7 +37,7 @@ public class Applet extends javacard.framework.Applet {
 	public static final short SW_CARD_DEAD = 0x6403;
 	public static final short SW_CARD_ALREADY_UNLOCK = 0x6404;
 	
- // For the lifeCycleState
+	// For the lifeCycleState
  	public static final byte PRE_PERSO = (byte) 0x00;
  	public static final byte USE = (byte) 0x01;
  	public static final byte BLOCKED = (byte) 0x02;
@@ -158,17 +159,25 @@ public class Applet extends javacard.framework.Applet {
 								if(PIN.check(buffer, ISO7816.OFFSET_CDATA, MAX_PIN_SIZE)) {
 									apdu.setOutgoingAndSend((short) 0, (short) 0);
 								}else {
-									ISOException.throwIt(SW_INVALID_PIN);
+									if(PIN.getTriesRemaining() == (byte)0) {
+										lifeCycleState = BLOCKED;
+										ISOException.throwIt(SW_BLOCKED_PIN);
+									}else {
+										ISOException.throwIt(SW_INVALID_PIN);
+									}
 								}
 							break;
 							case P1_RELOAD:
-								short amount = buffer[ISO7816.OFFSET_CDATA];
-					    		if(amount <= MAX_SIZE_RELOADING_AMOUNT && amount >= 0) {
-					    			balance += (byte)(amount);
-					    			apdu.setOutgoingAndSend((short) 0, (short) 0);
-					    		}else {
-					    			ISOException.throwIt(SW_INVALID_AMOUNT);
-					    		}
+								if(PIN.isValidated()) {
+									short amount = buffer[ISO7816.OFFSET_CDATA];
+									PIN.reset();
+						    		if(amount <= MAX_SIZE_RELOADING_AMOUNT && amount >= 0) {
+						    			balance += (byte)(amount);
+						    			apdu.setOutgoingAndSend((short) 0, (short) 0);
+						    		}else {
+						    			ISOException.throwIt(SW_INVALID_AMOUNT);
+						    		}
+								}
 							break;
 				    	}
 				    	}

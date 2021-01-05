@@ -31,6 +31,7 @@ public class Client {
     final static byte SW_INVALID_AMOUNT = (byte) 0x6304;
     final static byte SW_INVALID_PIN = (byte) 0x6305;
     final static byte SW_INVALID_PUK = (byte) 0x6306;
+    final static byte SW_BLOCKED_PIN = (byte) 0x6307;
     
     //Constantes de status word error for lifecycle
 	public static final short SW_CARD_ALREADY_INITIALIZED = 0x6400;
@@ -79,6 +80,9 @@ public class Client {
 		break;
 		case SW_INVALID_PUK:
 			System.out.println("Code PUK invalide.");
+		break;
+		case SW_BLOCKED_PIN:
+			System.out.println("Vous venez de bloquer la carte.");
 		break;
 		default:
 			System.out.println("Erreur : status word different de 0x9000");
