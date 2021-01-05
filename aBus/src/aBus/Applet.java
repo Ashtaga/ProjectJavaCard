@@ -21,9 +21,9 @@ public class Applet extends javacard.framework.Applet {
     final static byte INS_GET_TIME_EXPIRED = (byte) 0x06;
     
     // Constantes de status word error
-    final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6300;
     final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
     final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
+    final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6303;
     
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
@@ -116,8 +116,8 @@ public class Applet extends javacard.framework.Applet {
 					byte f = buffer[ISO7816.OFFSET_CDATA + 5];
 					DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
 					short buyHour = (short)(((f) << 8) | (e & 0xFF));
-					if(getLastTravelDateInMinute(buyDate, buyHour)< TRAVEL_VALIDITY_TIME ) {
-						ISOException.throwIt(TRAVEL_VALIDITY_TIME);
+					if(getLastTravelDateInMinute(buyDate, buyHour) < TRAVEL_VALIDITY_TIME ) {
+						ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
 						//TODO: Detecter si changement de ligne + envoyer message
 					}else{
 						//Voyage non valide
