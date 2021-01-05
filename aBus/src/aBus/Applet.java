@@ -31,7 +31,8 @@ public class Applet extends javacard.framework.Applet {
 	public static final short SW_CARD_NOT_INITIALIZED = 0x6401;
 	public static final short SW_CARD_BLOCKED = 0x6402;
 	public static final short SW_CARD_DEAD = 0x6403;
-    
+	public static final short SW_CARD_ALREADY_UNLOCK = 0x6404;
+	
  // For the lifeCycleState
  	public static final byte PRE_PERSO = (byte) 0x00;
  	public static final byte USE = (byte) 0x01;
@@ -77,7 +78,7 @@ public class Applet extends javacard.framework.Applet {
         bOffset = (short) (bOffset + cLen + 1);
         aLen = bArray[bOffset];
         PUK.update(bArray, (short) (bOffset + 1), aLen);*/
-        
+    	lifeCycleState = PRE_PERSO;
         balance = 0x01;
         lastTravelDate = new DateByte((byte)0x01,(byte)0x01,(short)2021);
         lastTravelTime = 0x00;
@@ -119,65 +120,116 @@ public class Applet extends javacard.framework.Applet {
     public void process(APDU apdu) throws ISOException {
 		byte[] buffer = apdu.getBuffer();
 		if (buffer[ISO7816.OFFSET_CLA] == MON_CLA) {
-			switch(buffer[ISO7816.OFFSET_INS]) {
-		    	case INS_BUY_TRAVEL: 
-		    		apdu.setIncomingAndReceive();
-					byte a = buffer[ISO7816.OFFSET_CDATA];
-					byte b = buffer[ISO7816.OFFSET_CDATA + 1];
-					byte c = buffer[ISO7816.OFFSET_CDATA + 2];
-					byte d = buffer[ISO7816.OFFSET_CDATA + 3];
-					byte e = buffer[ISO7816.OFFSET_CDATA + 4];
-					byte f = buffer[ISO7816.OFFSET_CDATA + 5];
-					DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
-					short buyHour = (short)(((f) << 8) | (e & 0xFF));
-					if(getLastTravelDateInMinute(buyDate, buyHour) < TRAVEL_VALIDITY_TIME ) {
-						ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
-						//TODO: Detecter si changement de ligne + envoyer message
-					}else{
-						//Voyage non valide
-						if(balance > ((byte)0x00)) {
-							--balance;
-							lastTravelDate.update(buyDate);
-							lastTravelTime = buyHour;
-						}else{
-							ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
-						}
-					}
-			    break;
-			    case INS_RELOAD_CARD: 
-			    break;
-			    case INS_CONSULT_CARD: 
-			    	buffer[0] = balance;
-					apdu.setOutgoingAndSend((short) 0, (short) 1);
-				break;
-			    case INS_UNLOCK_PIN: 
-				break;
-			    case INS_CHECK_VALIDITY: 
-			    	apdu.setIncomingAndReceive();
-					a = buffer[ISO7816.OFFSET_CDATA];
-					b = buffer[ISO7816.OFFSET_CDATA + 1];
-					c = buffer[ISO7816.OFFSET_CDATA + 2];
-					d = buffer[ISO7816.OFFSET_CDATA + 3];
-					e = buffer[ISO7816.OFFSET_CDATA + 4];
-					f = buffer[ISO7816.OFFSET_CDATA + 5];
-					controlDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
-					controlHour = (short)(((f) << 8) | (e & 0xFF));
-					validity = (short)(getLastTravelDateInMinute(controlDate, controlHour));
-					if(validity > TRAVEL_VALIDITY_TIME ) {
-						ISOException.throwIt(SW_TRAVEL_TIME_EXPIRED);
-					}
-				break;
-			    case INS_CHECK_LOGS: 
-				break;
-			    case INS_GET_TIME_EXPIRED: 
-			    	buffer[0] = (byte)(validity & 0xff);
-					buffer[1] = (byte)((validity >> 8) & 0xff);
-					buffer[2] = (byte)TRAVEL_VALIDITY_TIME;
-					apdu.setOutgoingAndSend((short) 0, (short) 3);
-				break;
-			    default:
-			    	ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
-		    }
+			if(lifeCycleState != DEAD) {
+				switch(buffer[ISO7816.OFFSET_INS]) {
+			    	case INS_BUY_TRAVEL: 
+			    		apdu.setIncomingAndReceive();
+						byte a = buffer[ISO7816.OFFSET_CDATA];
+						byte b = buffer[ISO7816.OFFSET_CDATA + 1];
+						byte c = buffer[ISO7816.OFFSET_CDATA + 2];
+						byte d = buffer[ISO7816.OFFSET_CDATA + 3];
+						byte e = buffer[ISO7816.OFFSET_CDATA + 4];
+						byte f = buffer[ISO7816.OFFSET_CDATA + 5];
+						DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
+						short buyHour = (short)(((f) << 8) | (e & 0xFF));
+			    		if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == BLOCKED) {
+				    		ISOException.throwIt(SW_CARD_BLOCKED);
+				    	}else {
+							if(getLastTravelDateInMinute(buyDate, buyHour) < TRAVEL_VALIDITY_TIME ) {
+								ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
+								//TODO: Detecter si changement de ligne + envoyer message
+							}else{
+								//Voyage non valide
+								if(balance > ((byte)0x00)) {
+									--balance;
+									lastTravelDate.update(buyDate);
+									lastTravelTime = buyHour;
+								}else{
+									ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
+								}
+							}
+				    	}
+				    break;
+				    case INS_RELOAD_CARD: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == BLOCKED) {
+				    		ISOException.throwIt(SW_CARD_BLOCKED);
+				    	}else {
+				    		//TODO : Faire processus de rechargement
+				    	}
+				    break;
+				    case INS_CONSULT_CARD: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == BLOCKED) {
+				    		ISOException.throwIt(SW_CARD_BLOCKED);
+				    	}else {
+				    		buffer[0] = balance;
+							apdu.setOutgoingAndSend((short) 0, (short) 1);
+				    	}
+					break;
+				    case INS_UNLOCK_PIN: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == USE) {
+				    		ISOException.throwIt(SW_CARD_ALREADY_UNLOCK);
+				    	}else {
+				    		//TODO : Deverouillage
+				    	}
+					break;
+				    case INS_CHECK_VALIDITY: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == BLOCKED) {
+				    		ISOException.throwIt(SW_CARD_BLOCKED);
+				    	}else {
+				    		apdu.setIncomingAndReceive();
+							a = buffer[ISO7816.OFFSET_CDATA];
+							b = buffer[ISO7816.OFFSET_CDATA + 1];
+							c = buffer[ISO7816.OFFSET_CDATA + 2];
+							d = buffer[ISO7816.OFFSET_CDATA + 3];
+							e = buffer[ISO7816.OFFSET_CDATA + 4];
+							f = buffer[ISO7816.OFFSET_CDATA + 5];
+							controlDate = new DateByte((byte)(a),(byte)(b),(short)(((d & 0xFF) << 8) | (c & 0xFF)));
+							controlHour = (short)(((f) << 8) | (e & 0xFF));
+							validity = (short)(getLastTravelDateInMinute(controlDate, controlHour));
+							if(validity > TRAVEL_VALIDITY_TIME ) {
+								ISOException.throwIt(SW_TRAVEL_TIME_EXPIRED);
+							}
+				    	}
+					break;
+				    case INS_CHECK_LOGS: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		ISOException.throwIt(SW_CARD_NOT_INITIALIZED);
+				    	}else if(lifeCycleState == BLOCKED) {
+				    		ISOException.throwIt(SW_CARD_BLOCKED);
+				    	}else {
+				    		//TODO : Faire envoyer la journalisation
+				    	}
+					break;
+				    case INS_GET_TIME_EXPIRED: 
+				    	buffer[0] = (byte)(validity & 0xff);
+						buffer[1] = (byte)((validity >> 8) & 0xff);
+						buffer[2] = (byte)TRAVEL_VALIDITY_TIME;
+						apdu.setOutgoingAndSend((short) 0, (short) 3);
+					break;
+				    case INS_INITIALISE_CARD: 
+				    	if(lifeCycleState == PRE_PERSO) {
+				    		//TODO: Init code PIN + PUK;
+				    		lifeCycleState = USE;
+				    	}else {
+				    		ISOException.throwIt(SW_CARD_ALREADY_INITIALIZED);
+				    	}
+						break;
+				    default:
+				    	ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
+			    }
+			}else {
+				ISOException.throwIt(SW_CARD_DEAD);
+			}
 		}else{
 		    ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
 		}

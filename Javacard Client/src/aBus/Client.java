@@ -33,6 +33,7 @@ public class Client {
 	public static final short SW_CARD_NOT_INITIALIZED = 0x6401;
 	public static final short SW_CARD_BLOCKED = 0x6402;
 	public static final short SW_CARD_DEAD = 0x6403;
+	public static final short SW_CARD_ALREADY_UNLOCK = 0x6404;
     
 	public static void errorManager(Apdu apdu, CadT1Client cad) throws IOException, CadTransportException{
 		switch (apdu.getStatus()) {
@@ -58,6 +59,9 @@ public class Client {
 		break;
 		case SW_CARD_DEAD:
 			System.out.println("La carte est inutilisable.");
+		break;
+		case SW_CARD_ALREADY_UNLOCK:
+			System.out.println("La carte n'est pas verouillée.");
 		break;
 		default:
 			System.out.println("Erreur : status word different de 0x9000");
@@ -91,6 +95,7 @@ public class Client {
 			System.out.println("Application aBus");
 			System.out.println("----------------------------");
 			System.out.println();
+			System.out.println("0 - Initialisation");
 			System.out.println("1 - Valider son voyage");
 			System.out.println("2 - Recharger la carte");
 			System.out.println("3 - Consulter la carte");
@@ -125,6 +130,16 @@ public class Client {
 				(byte)((time >> 8) & 0xff)
 			};
 			switch (choix) {
+				case '0':
+					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
+					apdu.setDataIn(dateData);
+					cad.exchangeApdu(apdu);
+					if (apdu.getStatus() == 0x9000) {
+
+					}else {
+						errorManager(apdu, cad);
+					}
+				break;
 				case '1':
 					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;			
 					apdu.setDataIn(dateData);
