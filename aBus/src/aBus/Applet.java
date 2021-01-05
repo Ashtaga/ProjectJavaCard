@@ -18,10 +18,13 @@ public class Applet extends javacard.framework.Applet {
     final static byte INS_UNLOCK_PIN = (byte) 0x03;
     final static byte INS_CHECK_VALIDITY = (byte) 0x04;
     final static byte INS_CHECK_LOGS = (byte) 0x05;
-
+    final static byte INS_GET_TIME_EXPIRED = (byte) 0x06;
+    
     // Constantes de status word error
     final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6300;
-
+    final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
+    final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
+    
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
     final static byte MAX_SIZE_RELOADING_AMOUNT = (byte) 0x05;//5
@@ -38,6 +41,9 @@ public class Applet extends javacard.framework.Applet {
     private OwnerPIN PUK;
     private DateByte lastTravelDate;
     private short lastTravelTime;
+    private short controlHour;
+	private short validity;
+	private DateByte controlDate;
     
 
     private Applet(byte[] bArray, short bOffset, byte bLength) {
@@ -58,8 +64,8 @@ public class Applet extends javacard.framework.Applet {
         aLen = bArray[bOffset];
         PUK.update(bArray, (short) (bOffset + 1), aLen);*/
         
-        balance = 0x03;
-        lastTravelDate = new DateByte();
+        balance = 0x01;
+        lastTravelDate = new DateByte((byte)0x01,(byte)0x01,(short)2021);
         lastTravelTime = 0x00;
         register();
     }
@@ -98,24 +104,24 @@ public class Applet extends javacard.framework.Applet {
 		if (buffer[ISO7816.OFFSET_CLA] == MON_CLA) {
 			switch(buffer[ISO7816.OFFSET_INS]) {
 		    	case INS_BUY_TRAVEL: 
-					if( lastTravelDate.getYear() != 0x00 && getLastTravelDateInMinute(lastTravelDate, lastTravelTime)<60) {
-						//Voyage valide
+		    		apdu.setIncomingAndReceive();
+					byte a = buffer[ISO7816.OFFSET_CDATA];
+					byte b = buffer[ISO7816.OFFSET_CDATA + 1];
+					byte c = buffer[ISO7816.OFFSET_CDATA + 2];
+					byte d = buffer[ISO7816.OFFSET_CDATA + 3];
+					byte e = buffer[ISO7816.OFFSET_CDATA + 4];
+					byte f = buffer[ISO7816.OFFSET_CDATA + 5];
+					DateByte buyDate = new DateByte((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
+					short buyHour = (short)(((e) << 8) | (f & 0xFF));
+					if(getLastTravelDateInMinute(buyDate, buyHour)< TRAVEL_VALIDITY_TIME ) {
+						ISOException.throwIt(TRAVEL_VALIDITY_TIME);
 						//TODO: Detecter si changement de ligne + envoyer message
 					}else{
 						//Voyage non valide
 						if(balance > ((byte)0x00)) {
-							apdu.setIncomingAndReceive();
-							byte a = buffer[ISO7816.OFFSET_CDATA];
-							byte b = buffer[ISO7816.OFFSET_CDATA + 1];
-							byte c = buffer[ISO7816.OFFSET_CDATA + 2];
-							byte d = buffer[ISO7816.OFFSET_CDATA + 3];
-							byte e = buffer[ISO7816.OFFSET_CDATA + 4];
-							byte f = buffer[ISO7816.OFFSET_CDATA + 5];
-							//--balance;
-							//TODO: Update Date and Time
-							balance = (byte)(b);
-							lastTravelDate.update((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
-							lastTravelTime = (short)(((e) << 8) | (f & 0xFF));
+							--balance;
+							lastTravelDate.update(buyDate);
+							lastTravelTime = buyHour;
 						}else{
 							ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
 						}
@@ -130,8 +136,26 @@ public class Applet extends javacard.framework.Applet {
 			    case INS_UNLOCK_PIN: 
 				break;
 			    case INS_CHECK_VALIDITY: 
+			    	apdu.setIncomingAndReceive();
+					a = buffer[ISO7816.OFFSET_CDATA];
+					b = buffer[ISO7816.OFFSET_CDATA + 1];
+					c = buffer[ISO7816.OFFSET_CDATA + 2];
+					d = buffer[ISO7816.OFFSET_CDATA + 3];
+					e = buffer[ISO7816.OFFSET_CDATA + 4];
+					f = buffer[ISO7816.OFFSET_CDATA + 5];
+					controlDate = new DateByte((byte)(a),(byte)(b),(short)(((c & 0xFF) << 8) | (d & 0xFF)));
+					controlHour = (short)(((e) << 8) | (f & 0xFF));
+					validity = (short)(getLastTravelDateInMinute(controlDate, controlHour) - 60);
+					if(validity > TRAVEL_VALIDITY_TIME ) {
+						ISOException.throwIt(SW_TRAVEL_TIME_EXPIRED);
+					}
 				break;
 			    case INS_CHECK_LOGS: 
+				break;
+			    case INS_GET_TIME_EXPIRED: 
+			    	buffer[0] = (byte)(validity & 0xff);
+					buffer[1] = (byte)((validity >> 8) & 0xff);
+					apdu.setOutgoingAndSend((short) 0, (short) 2);
 				break;
 			    default:
 			    	ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);

@@ -19,6 +19,11 @@ public class Client {
     final static byte INS_UNLOCK_PIN = (byte) 0x03;
     final static byte INS_CHECK_VALIDITY = (byte) 0x04;
     final static byte INS_CHECK_LOGS = (byte) 0x05;
+    final static byte INS_GET_TIME_EXPIRED = (byte) 0x06;
+    
+    final static byte SW_INSUFFICIENT_BALANCE_ERROR = (byte) 0x6300;
+    final static byte SW_TRAVEL_TIME_EXPIRED = (byte) 0x6301;
+    final static byte SW_TRAVEL_ALREADY_VALIDATED = (byte) 0x6302;
     
 	public static void main(String[] args) throws IOException, CadTransportException {
 		/* Connexion a la Javacard */
@@ -70,26 +75,28 @@ public class Client {
 			Date date = new Date();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
+			short year = (short) (calendar.get(Calendar.YEAR));
+			short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
+			byte[] dateData = {
+				(byte)(calendar.get(Calendar.DAY_OF_MONTH)),
+				(byte)(calendar.get(Calendar.MONTH) + 1),
+				(byte)(year & 0xff),
+				(byte)((year >> 8) & 0xff),
+				(byte)(time & 0xff),
+				(byte)((time >> 8) & 0xff)
+			};
 			
 			switch (choix) {
 				case '1':
 					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;			
-					short year = (short) (calendar.get(Calendar.YEAR));
-					short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
-					byte[] data = {
-						(byte)(calendar.get(Calendar.DAY_OF_MONTH)),
-						(byte)(calendar.get(Calendar.MONTH) + 1),
-						(byte)(year & 0xff),
-						(byte)((year >> 8) & 0xff),
-						(byte)(time & 0xff),
-						(byte)((time >> 8) & 0xff)
-					};
-					apdu.setDataIn(data);
+					apdu.setDataIn(dateData);
 					cad.exchangeApdu(apdu);
-					if (apdu.getStatus() != 0x9000) {
+					if (apdu.getStatus() == 0x9000) {
+						System.out.println("Trajet validé !");
+					}else if(apdu.getStatus() == SW_TRAVEL_ALREADY_VALIDATED) {
+						System.out.println("Vous avez déjà validé votre carte il y a moins de 60 minutes !");
+					}else {
 						System.out.println("Erreur : status word different de 0x9000");
-					} else {
-	
 					}
 				break;
 				case '2':
@@ -121,12 +128,18 @@ public class Client {
 				break;
 				case '5':
 					apdu.command[Apdu.INS] = Client.INS_CHECK_VALIDITY;
+					apdu.setDataIn(dateData);
 					cad.exchangeApdu(apdu);
-					if (apdu.getStatus() != 0x9000) {
+					if (apdu.getStatus() == SW_TRAVEL_TIME_EXPIRED) {
+						apdu.command[Apdu.INS] = Client.INS_GET_TIME_EXPIRED;
+						cad.exchangeApdu(apdu);
+						System.out.println("Validité du voyage terminée ! " + (short)(((apdu.dataOut[0]) << 8) | (apdu.dataOut[1] & 0xFF)));
+					} else if (apdu.getStatus() != 0x9000) {
 						System.out.println("Erreur : status word different de 0x9000");
-					} else {
-	
+					}else {
+						System.out.println("Carte validé !");
 					}
+					
 				break;	
 				case '6':
 					apdu.command[Apdu.INS] = Client.INS_CHECK_LOGS;
@@ -134,7 +147,7 @@ public class Client {
 					if (apdu.getStatus() != 0x9000) {
 						System.out.println("Erreur : status word different de 0x9000");
 					} else {
-	
+						
 					}
 				break;	
 				case '7':

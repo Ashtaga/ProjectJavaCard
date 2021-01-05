@@ -35,4 +35,10 @@ public class DateByte{
     	this.year = year;
     }
     
+    public void update(DateByte db) {
+    	this.day = db.getDay();
+    	this.month = db.getMonth();
+    	this.year = db.getYear();
+    }
+    
 }
