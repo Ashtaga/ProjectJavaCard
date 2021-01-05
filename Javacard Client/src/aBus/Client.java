@@ -39,18 +39,6 @@ public class Client {
 		
 		 /* Sélection de l'applet */
 		Apdu apdu = new Apdu();
-		 apdu.command[Apdu.CLA] = 0x25;
-		 apdu.command[Apdu.INS] = (byte) 0x00;
-		 apdu.command[Apdu.P1] = 0x00;
-		 apdu.command[Apdu.P2] = 0x00;
-		 byte[] appletAID = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00, 0x00 };
-		 apdu.setDataIn(appletAID);
-		 cad.exchangeApdu(apdu);
-		 if (apdu.getStatus() != 0x9000) {
-			 System.out.println("Erreur lors de la sélection de l'applet");
-			 System.exit(1);
-		 }
-
 		
 		/* Menu principal */
 		boolean fin = false;
