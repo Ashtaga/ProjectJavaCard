@@ -58,7 +58,7 @@ public class Applet extends javacard.framework.Applet {
         aLen = bArray[bOffset];
         PUK.update(bArray, (short) (bOffset + 1), aLen);*/
         
-        balance = 0x02;
+        balance = 0x03;
         lastTravelDate = new DateByte();
         lastTravelTime = 0x00;
         register();
@@ -98,16 +98,22 @@ public class Applet extends javacard.framework.Applet {
 		if (buffer[ISO7816.OFFSET_CLA] == MON_CLA) {
 			switch(buffer[ISO7816.OFFSET_INS]) {
 		    	case INS_BUY_TRAVEL: 
-					if( lastTravelDate.getYear() != 0x00 || getLastTravelDateInMinute(lastTravelDate, lastTravelTime)<60) {
+					if( lastTravelDate.getYear() != 0x00 && getLastTravelDateInMinute(lastTravelDate, lastTravelTime)<60) {
 						//Voyage valide
 						//TODO: Detecter si changement de ligne + envoyer message
 					}else{
 						//Voyage non valide
 						if(balance > ((byte)0x00)) {
-							balance = buffer[ISO7816.OFFSET_CDATA];
 							apdu.setIncomingAndReceive();
+							short a = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							short b = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							short c = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							short d = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							short e = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
+							short f = apdu.receiveBytes ( ISO7816.OFFSET_CDATA );
 							//--balance;
 							//TODO: Update Date and Time
+							balance = (byte)(a & 0xff);
 							lastTravelDate.update((byte)0x00,(byte)0x00,(short)0x00);
 							lastTravelTime = 0x628;
 						}else{
