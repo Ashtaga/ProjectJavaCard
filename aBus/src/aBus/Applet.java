@@ -4,7 +4,12 @@ import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 import javacard.framework.OwnerPIN;
-
+//TODO : validation ticket : ajouter numéro de ligne et direction 
+//bloquer code pide après 3 tentatives 
+//dévérouillage code pin avec code puk
+//journalisation des données
+//garder historique en mémoire de la carte
+//ownerPIN pour le code puk
 public class Applet extends javacard.framework.Applet {
 	// On d�finit des constantes pour faciliter l'�criture des programmes
 
