@@ -5,7 +5,6 @@ import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 import javacard.framework.OwnerPIN;
 //TODO : validation ticket : ajouter numéro de ligne et direction 
-//bloquer code pide après 3 tentatives 
 //dévérouillage code pin avec code puk
 //journalisation des données
 //garder historique en mémoire de la carte
@@ -51,6 +50,7 @@ public class Applet extends javacard.framework.Applet {
  	//Arguments
 	public static final short P1_VERIFY_PIN = (byte)0x01;
 	public static final short P1_RELOAD = (byte)0x02;
+	public static final short P1_VERIFY_PUK = (byte) 0x03;
  		
     // Autres constantes (constantes fonctionnelles)
     final static byte MAX_BALANCE = (byte) 0x1E;//30
@@ -204,8 +204,27 @@ public class Applet extends javacard.framework.Applet {
 				    	}else if(lifeCycleState == USE) {
 				    		ISOException.throwIt(SW_CARD_ALREADY_UNLOCK);
 				    	}else {
-				    		//TODO : Deverouillage
-				    	}
+				    		apdu.setIncomingAndReceive();
+				    		if(buffer[ISO7816.OFFSET_P1] == P1_VERIFY_PUK)
+				    		{
+				    			if (this.lifeCycleState != BLOCKED) {
+				                    ISOException.throwIt(ISO7816.SW_COMMAND_NOT_ALLOWED);
+				    			}
+				                	if(PUK.check(buffer, ISO7816.OFFSET_CDATA, MAX_PUK_SIZE)) {
+				                		PIN.resetAndUnblock();
+				                		PUK.reset();
+				                		lifeCycleState = USE;
+										apdu.setOutgoingAndSend((short) 0, (short) 0);
+									}else {
+										if(PUK.getTriesRemaining() == (byte)0) {
+											lifeCycleState = DEAD;
+											ISOException.throwIt(SW_CARD_DEAD);
+										}else {
+											ISOException.throwIt(SW_INVALID_PUK);
+										}
+									}
+				    			}
+				           }
 					break;
 				    case INS_CHECK_VALIDITY: 
 				    	if(lifeCycleState == PRE_PERSO) {

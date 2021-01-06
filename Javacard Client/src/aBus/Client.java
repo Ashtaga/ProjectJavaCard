@@ -43,6 +43,7 @@ public class Client {
 	//Arguments
 	public static final short P1_VERIFY_PIN = (byte)0x01;
 	public static final short P1_RELOAD = (byte)0x02;
+	public static final short P1_VERIFY_PUK = (byte) 0x03;
 	
 	public static void errorManager(Apdu apdu, CadT1Client cad) throws IOException, CadTransportException{
 		switch (apdu.getStatus()) {
@@ -230,11 +231,36 @@ public class Client {
 				break;
 				case '4':
 					apdu.command[Apdu.INS] = Client.INS_UNLOCK_PIN;
+					apdu.command[Apdu.P1] = P1_VERIFY_PUK;
 					cad.exchangeApdu(apdu);
-					if (apdu.getStatus() != 0x9000) {
-						errorManager(apdu, cad);
-					} else {
-	
+					
+						System.out.println("Veuillez saisir le code PUK afin de dévérouiller le code PIN");
+						byte pu1 = clavier.nextByte();
+						byte pu2 = clavier.nextByte();
+						byte pu3 = clavier.nextByte();
+						byte pu4 = clavier.nextByte();
+						byte[] cPuk = {pu1,pu2,pu3,pu4};
+						apdu.setDataIn(cPuk);
+						cad.exchangeApdu(apdu);
+						if (apdu.getStatus() != 0x9000) {
+							errorManager(apdu, cad);
+						}else 
+						{
+							
+							try{
+							apdu.command[Apdu.P1] = P1_VERIFY_PUK;
+							apdu.setDataIn(cPuk);
+							}catch(Exception e){
+							
+								System.out.println("Erreur: Impossible d'executer la commande");
+								return;
+							}
+							if (apdu.getStatus() != 0x9000) {
+								errorManager(apdu, cad);
+							} else {
+								cad.exchangeApdu(apdu);
+								System.out.println("Carte devérouillée");
+							}
 					}
 				break;
 				case '5':
