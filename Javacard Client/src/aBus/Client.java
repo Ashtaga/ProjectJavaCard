@@ -181,7 +181,29 @@ public class Client {
 					apdu.setDataIn(dateData);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
+						System.out.println("Veuillez entrer le numéro de ligne :");
+						byte p1 = clavier.nextByte();
+						byte[] numligne = {p1};
+						apdu.setDataIn(numligne);
+						cad.exchangeApdu(apdu);
+						if (apdu.getStatus() != 0x9000) {
+							errorManager(apdu, cad);
+						}else {
+						byte p2 = 0x03;
+						while(p2>0x01)
+						{
+							System.out.println("Veuillez entrer le sens (0 ou 1):");
+							p2 = clavier.nextByte();
+						}
+						byte[] sens = {p2};
+						apdu.setDataIn(sens);
+						cad.exchangeApdu(apdu);
+						if (apdu.getStatus() != 0x9000) {
+							errorManager(apdu, cad);
+						}else {
 						System.out.println("Trajet validé !");
+						}
+						}
 					}else {
 						errorManager(apdu, cad);
 					}

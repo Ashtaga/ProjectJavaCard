@@ -72,7 +72,8 @@ public class Applet extends javacard.framework.Applet {
     private short controlHour;
 	private short validity;
 	private DateByte controlDate;
-    
+    private byte derniereLigne;
+    private byte dernierSens;
 
     private Applet(byte[] bArray, short bOffset, byte bLength) {
         PIN = new OwnerPIN(PIN_TRY_LIMIT, MAX_PIN_SIZE);
@@ -138,12 +139,30 @@ public class Applet extends javacard.framework.Applet {
 				    		ISOException.throwIt(SW_CARD_BLOCKED);
 				    	}else {
 							if(getLastTravelDateInMinute(buyDate, buyHour) < TRAVEL_VALIDITY_TIME ) {
-								ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
-								//TODO: Detecter si changement de ligne + envoyer message
+								apdu.setIncomingAndReceive();
+								byte nvligne = buffer[ISO7816.OFFSET_CDATA];
+								apdu.setIncomingAndReceive();
+								byte nvSens =  buffer[ISO7816.OFFSET_CDATA];
+								if (derniereLigne == nvligne && dernierSens == nvSens)
+								{
+									ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
+								}
+								else{
+									derniereLigne = nvligne;
+									dernierSens = nvSens;
+								}
+								
+								
+								
+								
 							}else{
 								//Voyage non valide
 								if(balance > ((byte)0x00)) {
 									--balance;
+									apdu.setIncomingAndReceive();
+									derniereLigne = buffer[ISO7816.OFFSET_CDATA];
+									apdu.setIncomingAndReceive();
+									dernierSens = buffer[ISO7816.OFFSET_CDATA];
 									lastTravelDate.update(buyDate);
 									lastTravelTime = buyHour;
 								}else{
