@@ -218,12 +218,10 @@ public class Applet extends javacard.framework.Applet {
 							break;
 							case P1_RELOAD:
 								if(PIN.isValidated()) {
-									byte amount = buffer[ISO7816.OFFSET_CDATA];
+									byte amount = buffer[ISO7816.OFFSET_CDATA+6];
 									PIN.reset();
 						    		if(amount <= MAX_SIZE_RELOADING_AMOUNT && amount >= 0) {
 						    			balance += amount;
-										ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
-						    			apdu.setIncomingAndReceive();
 										byte a1 = buffer[ISO7816.OFFSET_CDATA];
 										byte b1 = buffer[ISO7816.OFFSET_CDATA + 1];
 										byte c1 = buffer[ISO7816.OFFSET_CDATA + 2];

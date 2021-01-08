@@ -214,9 +214,7 @@ public class Client {
 						System.out.println("Saisir un montant :");
 						byte amount = clavier.nextByte();
 						try {
-							byte[] dataA = {amount};
-							apdu.setDataIn(dataA);
-							cad.exchangeApdu(apdu);
+							dateData[6] = amount;
 							apdu.setDataIn(dateData);
 							cad.exchangeApdu(apdu);
 						}
