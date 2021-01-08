@@ -91,7 +91,7 @@ public class Applet extends javacard.framework.Applet {
         lastTravelDate = new DateByte((byte)0x01,(byte)0x01,(short)2021);
         lastTravelTime = 0x00;
         journalisation = new byte[tailleJ];
-        for (int i = 0; i<journalisation.length;i++)
+        for (short i = 0; i<journalisation.length;i++)
         {
         		journalisation[i] = EMPTY_DATA;
         
@@ -163,10 +163,10 @@ public class Applet extends javacard.framework.Applet {
 									journalisation[indexJ] = CORRESPOND;
 									journalisation[indexJ+1]=buyDate.getDay();
 									journalisation[indexJ+2]=buyDate.getMonth();
-									journalisation[indexJ+3]=(byte) (d & 0xFF);
-									journalisation[indexJ+4]= (byte) (c & 0xFF);
-									journalisation[indexJ+5]= (byte)((f) << 8);
-									journalisation[indexJ+6]= (byte)(e & 0xFF);
+									journalisation[indexJ+3]=d ;
+									journalisation[indexJ+4]=c;
+									journalisation[indexJ+5]= f;
+									journalisation[indexJ+6]=e;
 									journalisation[indexJ+7]= derniereLigne;
 									journalisation[indexJ+8]= dernierSens;
 									indexJ= (short) (indexJ + 9);
@@ -183,10 +183,10 @@ public class Applet extends javacard.framework.Applet {
 									journalisation[indexJ] = BUY;
 									journalisation[indexJ+1]=buyDate.getDay();
 									journalisation[indexJ+2]=buyDate.getMonth();
-									journalisation[indexJ+3]=(byte) (d & 0xFF);
-									journalisation[indexJ+4]= (byte) (c & 0xFF);
+									journalisation[indexJ+3]=d;
+									journalisation[indexJ+4]=c;
 									journalisation[indexJ+5]= f;
-									journalisation[indexJ+6]= (byte)(e & 0xFF);
+									journalisation[indexJ+6]= e;
 									journalisation[indexJ+7]= derniereLigne;
 									journalisation[indexJ+8]= dernierSens;
 									indexJ= (short) (indexJ + 9);
@@ -222,6 +222,7 @@ public class Applet extends javacard.framework.Applet {
 									PIN.reset();
 						    		if(amount <= MAX_SIZE_RELOADING_AMOUNT && amount >= 0) {
 						    			balance += (byte)(amount);
+										ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
 						    			apdu.setIncomingAndReceive();
 										byte a1 = buffer[ISO7816.OFFSET_CDATA];
 										byte b1 = buffer[ISO7816.OFFSET_CDATA + 1];
@@ -234,10 +235,10 @@ public class Applet extends javacard.framework.Applet {
 										journalisation[indexJ] = RELOAD;
 										journalisation[indexJ+1]=a1;
 										journalisation[indexJ+2]=b1;
-										journalisation[indexJ+3]=(byte) (d1 & 0xFF);
-										journalisation[indexJ+4]= (byte) (c1 & 0xFF);
+										journalisation[indexJ+3]=d1;
+										journalisation[indexJ+4]=c1;
 										journalisation[indexJ+5]= f1;
-										journalisation[indexJ+6]= (byte)(e1 & 0xFF);
+										journalisation[indexJ+6]= e1;
 										journalisation[indexJ+7]= (byte)(amount);
 										indexJ= (short) (indexJ + 9);
 						    		}else {
@@ -314,7 +315,15 @@ public class Applet extends javacard.framework.Applet {
 				    	}else if(lifeCycleState == BLOCKED) {
 				    		ISOException.throwIt(SW_CARD_BLOCKED);
 				    	}else {
-				    		//TODO : Faire envoyer la journalisation
+				    		short ind = (short)0;
+				    		for(short i = indexJ; i!=indexJ-1;i++)
+				    		{
+				    			i=(short)(i%tailleJ);
+				    			buffer[ind] = journalisation[i];
+				    			ind++;
+				    		}
+				    		buffer[tailleJ]=journalisation[indexJ-1];
+				    		apdu.setOutgoingAndSend((short) 0, tailleJ);
 				    	}
 					break;
 				    case INS_GET_TIME_EXPIRED: 

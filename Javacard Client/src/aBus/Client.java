@@ -292,7 +292,35 @@ public class Client {
 					if (apdu.getStatus() != 0x9000) {
 						errorManager(apdu, cad);
 					} else {
-						
+						cad.exchangeApdu(apdu);
+						byte[] tabJ = new byte[90];
+						for(int i = 0; i<90; i++)
+						{
+							tabJ[i] = apdu.dataOut[i];
+						}
+					System.out.println("Historique de vos transactions :");
+					int cpt = 0;
+					for(int j = 0; j< 10; j++)
+					{
+						short year1 =(short)((tabJ[(j*9)+3] & 0xFF) << 8);
+						short year2 =(short)( tabJ[(j*9)+4]& 0xFF);
+						short month =(short)(tabJ[(j*9)+1]);
+						short day =(short)(tabJ[(j*9)+2]);
+						short h1 = (short)(tabJ[(j*9)+5] << 8);
+						short h2 = (short)(tabJ[(j*9)+6] & 0xFF);
+						System.out.print("["+j+"]");
+						switch(tabJ[j*9])
+						{
+						case 0x01 : System.out.println("Achat d'un voyage");
+						System.out.print("Ligne "+tabJ[(j*9)+7]+", sens "+tabJ[(j*9)+8]+" acheté le "+ year1 +""+year2+" "+month+" "+day+" à "+h1+" "+h2);
+						break;
+						case 0x02 : System.out.println("Rechargement de la carte");
+						break;
+						case 0x03 : System.out.println("Changement de correspondance au cours d'un voyage");
+						break;
+						}
+							
+					}
 					}
 				break;	
 				case '7':
