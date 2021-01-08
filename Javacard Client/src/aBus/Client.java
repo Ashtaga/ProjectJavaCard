@@ -310,7 +310,7 @@ public class Client {
 						short sens =(short)tabJ[(j*9)+8];
 						if (tabJ[j*9] != EMPTY_DATA)
 						{
-							int num =10-j;
+							int num =j+1;
 							System.out.print("["+num+"]");
 						}
 						switch(tabJ[j*9])

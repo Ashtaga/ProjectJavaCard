@@ -1,5 +1,7 @@
+//Projet JavaCard Université de Franche-Comté
+//Année 2020-2021
+//Grandperrin Loïc, Garnier Aurélien, Cosgun Murat
 package aBus;
-
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
@@ -320,7 +322,7 @@ public class Applet extends javacard.framework.Applet {
 				    			buffer[ind] = journalisation[i];
 				    			ind++;
 				    		}
-				    		buffer[tailleJ]=journalisation[(short)(indexJ-1)];
+				    		buffer[(byte)(tailleJ-1)]=journalisation[(byte)(indexJ-1)];
 				    		apdu.setOutgoingAndSend((short) 0, tailleJ);
 				    	}
 					break;
