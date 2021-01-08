@@ -44,7 +44,7 @@ public class Client {
 	public static final short P1_VERIFY_PIN = (byte)0x01;
 	public static final short P1_RELOAD = (byte)0x02;
 	public static final short P1_VERIFY_PUK = (byte) 0x03;
-	
+	public final static byte EMPTY_DATA = (byte) 0x7777;
 	public static void errorManager(Apdu apdu, CadT1Client cad) throws IOException, CadTransportException{
 		switch (apdu.getStatus()) {
 		case SW_TRAVEL_TIME_EXPIRED:
@@ -310,7 +310,11 @@ public class Client {
 						short h = (short)(h1/60);
 						short lignecout =(short) tabJ[(j*9)+7];
 						short sens =(short)tabJ[(j*9)+8];
-						System.out.print("["+j+"]");
+						if (tabJ[j*9] != EMPTY_DATA)
+						{
+							int num =10-j;
+							System.out.print("["+num+"]");
+						}
 						switch(tabJ[j*9])
 						{
 						case 0x01 : System.out.print("Achat d'un voyage : ");
