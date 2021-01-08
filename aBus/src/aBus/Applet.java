@@ -152,15 +152,11 @@ public class Applet extends javacard.framework.Applet {
 				    		ISOException.throwIt(SW_CARD_BLOCKED);
 				    	}else {
 							if(getLastTravelDateInMinute(buyDate, buyHour) < TRAVEL_VALIDITY_TIME ) {
-								apdu.setIncomingAndReceive();
-								byte nvligne = buffer[ISO7816.OFFSET_CDATA];
-								apdu.setIncomingAndReceive();
-								byte nvSens =  buffer[ISO7816.OFFSET_CDATA];
-								if (derniereLigne == nvligne && dernierSens == nvSens)
-								{
+								byte nvligne = buffer[ISO7816.OFFSET_CDATA + 6];
+								byte nvSens =  buffer[ISO7816.OFFSET_CDATA + 7];
+								if (derniereLigne == nvligne && dernierSens == nvSens){
 									ISOException.throwIt(SW_TRAVEL_ALREADY_VALIDATED);
-								}
-								else{
+								}else{
 									derniereLigne = nvligne;
 									dernierSens = nvSens;
 									indexJ = (short) (indexJ%tailleJ);
@@ -175,20 +171,14 @@ public class Applet extends javacard.framework.Applet {
 									journalisation[indexJ+8]= dernierSens;
 									indexJ= (short) (indexJ + 9);
 								}
-								
-								
-								
-								
 							}else{
 								//Voyage non valide
 								if(balance > ((byte)0x00)) {
-									--balance;
-									apdu.setIncomingAndReceive();
-									derniereLigne = buffer[ISO7816.OFFSET_CDATA];
-									apdu.setIncomingAndReceive();
-									dernierSens = buffer[ISO7816.OFFSET_CDATA];
+									derniereLigne = buffer[ISO7816.OFFSET_CDATA + 6];
+									dernierSens = buffer[ISO7816.OFFSET_CDATA + 7];
 									lastTravelDate.update(buyDate);
 									lastTravelTime = buyHour;
+									--balance;
 									indexJ = (short) (indexJ%tailleJ);
 									journalisation[indexJ] = BUY;
 									journalisation[indexJ+1]=buyDate.getDay();
