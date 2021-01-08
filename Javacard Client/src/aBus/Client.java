@@ -302,21 +302,25 @@ public class Client {
 					int cpt = 0;
 					for(int j = 0; j< 10; j++)
 					{
-						short year1 =(short)((tabJ[(j*9)+3] & 0xFF) << 8);
-						short year2 =(short)( tabJ[(j*9)+4]& 0xFF);
+						short year1 =(short)((tabJ[(j*9)+3] & 0xFF) << 8 | (tabJ[(j*9)+4]& 0xFF));
 						short month =(short)(tabJ[(j*9)+1]);
 						short day =(short)(tabJ[(j*9)+2]);
-						short h1 = (short)(tabJ[(j*9)+5] << 8);
-						short h2 = (short)(tabJ[(j*9)+6] & 0xFF);
+						short h1 = (short)(tabJ[(j*9)+5] << 8 | (tabJ[(j*9)+6] & 0xFF));
+						short min = (short)(h1%60);
+						short h = (short)(h1/60);
+						short lignecout =(short) tabJ[(j*9)+7];
+						short sens =(short)tabJ[(j*9)+8];
 						System.out.print("["+j+"]");
 						switch(tabJ[j*9])
 						{
-						case 0x01 : System.out.println("Achat d'un voyage");
-						System.out.print("Ligne "+tabJ[(j*9)+7]+", sens "+tabJ[(j*9)+8]+" acheté le "+ year1 +""+year2+" "+month+" "+day+" à "+h1+" "+h2);
+						case 0x01 : System.out.print("Achat d'un voyage : ");
+						System.out.println("Ligne "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 						break;
 						case 0x02 : System.out.println("Rechargement de la carte");
+						System.out.println("Rechargement pour "+lignecout+" trajets achetés le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 						break;
 						case 0x03 : System.out.println("Changement de correspondance au cours d'un voyage");
+						System.out.println("Nouvelle correspondance "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 						break;
 						}
 							

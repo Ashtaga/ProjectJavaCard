@@ -160,15 +160,15 @@ public class Applet extends javacard.framework.Applet {
 									derniereLigne = nvligne;
 									dernierSens = nvSens;
 									indexJ = (short) (indexJ%tailleJ);
-									journalisation[indexJ] = CORRESPOND;
-									journalisation[indexJ+1]=buyDate.getDay();
-									journalisation[indexJ+2]=buyDate.getMonth();
-									journalisation[indexJ+3]=d ;
-									journalisation[indexJ+4]=c;
-									journalisation[indexJ+5]= f;
-									journalisation[indexJ+6]=e;
-									journalisation[indexJ+7]= derniereLigne;
-									journalisation[indexJ+8]= dernierSens;
+									journalisation[(byte)(indexJ)] = CORRESPOND;
+									journalisation[(byte)(indexJ+1)]=buyDate.getDay();
+									journalisation[(byte)(indexJ+2)]=buyDate.getMonth();
+									journalisation[(byte)(indexJ+3)]=d ;
+									journalisation[(byte)(indexJ+4)]=c;
+									journalisation[(byte)(indexJ+5)]= f;
+									journalisation[(byte)(indexJ+6)]=e;
+									journalisation[(byte)(indexJ+7)]= derniereLigne;
+									journalisation[(byte)(indexJ+8)]= dernierSens;
 									indexJ= (short) (indexJ + 9);
 								}
 							}else{
@@ -180,15 +180,15 @@ public class Applet extends javacard.framework.Applet {
 									lastTravelTime = buyHour;
 									--balance;
 									indexJ = (short) (indexJ%tailleJ);
-									journalisation[indexJ] = BUY;
-									journalisation[indexJ+1]=buyDate.getDay();
-									journalisation[indexJ+2]=buyDate.getMonth();
-									journalisation[indexJ+3]=d;
-									journalisation[indexJ+4]=c;
-									journalisation[indexJ+5]= f;
-									journalisation[indexJ+6]= e;
-									journalisation[indexJ+7]= derniereLigne;
-									journalisation[indexJ+8]= dernierSens;
+									journalisation[(byte)(indexJ)] = BUY;
+									journalisation[(byte)(indexJ+1)]=buyDate.getDay();
+									journalisation[(byte)(indexJ+2)]=buyDate.getMonth();
+									journalisation[(byte)(indexJ+3)]=d;
+									journalisation[(byte)(indexJ+4)]=c;
+									journalisation[(byte)(indexJ+5)]= f;
+									journalisation[(byte)(indexJ+6)]= e;
+									journalisation[(byte)(indexJ+7)]= derniereLigne;
+									journalisation[(byte)(indexJ+8)]= dernierSens;
 									indexJ= (short) (indexJ + 9);
 								}else{
 									ISOException.throwIt(SW_INSUFFICIENT_BALANCE_ERROR);
@@ -232,14 +232,14 @@ public class Applet extends javacard.framework.Applet {
 										byte f1 = buffer[ISO7816.OFFSET_CDATA + 5];
 						    			apdu.setOutgoingAndSend((short) 0, (short) 0);
 										indexJ = (short) (indexJ%tailleJ);
-										journalisation[indexJ] = RELOAD;
-										journalisation[indexJ+1]=a1;
-										journalisation[indexJ+2]=b1;
-										journalisation[indexJ+3]=d1;
-										journalisation[indexJ+4]=c1;
-										journalisation[indexJ+5]= f1;
-										journalisation[indexJ+6]= e1;
-										journalisation[indexJ+7]= (byte)(amount);
+										journalisation[(byte)(indexJ)] = RELOAD;
+										journalisation[(byte)(indexJ+1)]=a1;
+										journalisation[(byte)(indexJ+2)]=b1;
+										journalisation[(byte)(indexJ+3)]=d1;
+										journalisation[(byte)(indexJ+4)]=c1;
+										journalisation[(byte)(indexJ+5)]= f1;
+										journalisation[(byte)(indexJ+6)]= e1;
+										journalisation[(byte)(indexJ+7)]= (byte)(amount);
 										indexJ= (short) (indexJ + 9);
 						    		}else {
 						    			ISOException.throwIt(SW_INVALID_AMOUNT);
@@ -316,13 +316,13 @@ public class Applet extends javacard.framework.Applet {
 				    		ISOException.throwIt(SW_CARD_BLOCKED);
 				    	}else {
 				    		short ind = (short)0;
-				    		for(short i = indexJ; i!=indexJ-1;i++)
+				    		for(short i = indexJ; i!=(short)(indexJ-1);i++)
 				    		{
 				    			i=(short)(i%tailleJ);
 				    			buffer[ind] = journalisation[i];
 				    			ind++;
 				    		}
-				    		buffer[tailleJ]=journalisation[indexJ-1];
+				    		buffer[tailleJ]=journalisation[(short)(indexJ-1)];
 				    		apdu.setOutgoingAndSend((short) 0, tailleJ);
 				    	}
 					break;
