@@ -231,16 +231,20 @@ public class Client {
 							byte[] dataA = {amount};
 							apdu.setDataIn(dataA);
 							cad.exchangeApdu(apdu);
-						} catch (Exception e) {
+							apdu.setDataIn(dateData);
+							cad.exchangeApdu(apdu);
+						}
+						 catch (Exception e) {
 							System.out.println("Erreur: Impossible d'executer la commande");
 							return;
 						}
 						if (apdu.getStatus() != 0x9000) {
 							errorManager(apdu, cad);
 						} else {
-							System.out.println("Votre carte a bien été rechergée !");
+							System.out.println("Votre carte a bien été rechargée !");
 						}
 					}
+					
 				break;	
 				case '3':
 					apdu.command[Apdu.INS] = Client.INS_CONSULT_CARD;
