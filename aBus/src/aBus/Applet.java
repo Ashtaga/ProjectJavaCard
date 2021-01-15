@@ -100,15 +100,29 @@ public class Applet extends javacard.framework.Applet {
         }
         register();
     }
-
+    /**
+    * Installe l'applet en défini ses valeurs 
+    *
+    * @param bArray Tableau de byte 
+    * @param bOffset Nombre d'offset 
+    * @param bLength Taille du byte  
+    *             
+    */
     public static void install(byte[] bArray, short bOffset, byte bLength) {
         new Applet(bArray, bOffset, bLength);
     }
-
+    
     public boolean select() {
     	return true;
     }
 
+    /**
+    * Donne les minutes passé entre maintenant et la validité du ticket
+    *
+    * @param db  	Type utilisé pour obtenir le temps  
+    * @param  hour  Nombre qui donne quelque chose 
+    * @return res 	Retourne le nombre de minute écoulées 
+    */
     private short getLastTravelDateInMinute(DateByte db, short hour)  {
     	//Pour simplifier le calcul, on considère que les mois ont 31 jours.
     	short res = (short)0;
@@ -132,6 +146,12 @@ public class Applet extends javacard.framework.Applet {
     	}
     	return res;
     }
+    /**
+    * Fonction qui execute les instructions données par l'utilisateur 
+    *
+    * @param apdu  apdu en entrée
+    *             
+    */
     
     public void process(APDU apdu) throws ISOException {
 		byte[] buffer = apdu.getBuffer();
