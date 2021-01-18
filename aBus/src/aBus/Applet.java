@@ -287,8 +287,7 @@ public class Applet extends javacard.framework.Applet {
 				    		ISOException.throwIt(SW_CARD_ALREADY_UNLOCK);
 				    	}else {
 				    		apdu.setIncomingAndReceive();
-				    		if(buffer[ISO7816.OFFSET_P1] == P1_VERIFY_PUK)
-				    		{
+				    		if(buffer[ISO7816.OFFSET_P1] == P1_VERIFY_PUK){
 				    			if (this.lifeCycleState != BLOCKED) {
 				                    ISOException.throwIt(ISO7816.SW_COMMAND_NOT_ALLOWED);
 				    			}

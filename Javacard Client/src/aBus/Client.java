@@ -90,6 +90,40 @@ public class Client {
 		}
 	}
 	
+	public static byte[] saisieDate() {
+		byte[] data = new byte[8];
+		
+		/*Date date = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		short year = (short) (calendar.get(Calendar.YEAR));
+		short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
+		data[0] =(byte)(calendar.get(Calendar.DAY_OF_MONTH));
+		data[1] =(byte)(calendar.get(Calendar.MONTH) + 1);
+		data[2] =(byte)(year & 0xff);
+		data[3] =(byte)((year >> 8) & 0xff);
+		data[4] =(byte)(time & 0xff);
+		data[5] =(byte)((time >> 8) & 0xff);*/
+
+			
+		Scanner clavier = new Scanner(System.in);
+		System.out.println("Saisir le jour :");
+		byte saisie = clavier.nextByte();
+		data[0] = saisie;
+		System.out.println("Saisir le mois :");
+		saisie = clavier.nextByte();
+		data[1] = saisie;
+		System.out.println("Saisir l'année :");
+		short saisie2 = clavier.nextShort();
+		data[2] = (byte)(saisie2 & 0xff);
+		data[3] = (byte)((saisie2 >> 8) & 0xff);
+		System.out.println("Saisir l'heure (format minute) :");
+		saisie2 = clavier.nextShort();
+		data[4] = (byte)(saisie2 & 0xff);
+		data[5] = (byte)((saisie2 >> 8) & 0xff);
+		return data;
+	}
+	
 	public static void main(String[] args) throws IOException, CadTransportException {
 		/* Connexion a la Javacard */
 		CadT1Client cad;
@@ -137,22 +171,9 @@ public class Client {
 			apdu.command[Apdu.CLA] = 0x25;
 			apdu.command[Apdu.P1] = 0x00;
 			apdu.command[Apdu.P2] = 0x00;
-			
-			Date date = new Date();
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(date);
-			short year = (short) (calendar.get(Calendar.YEAR));
-			short time = (short) (calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE));
-			byte[] dateData = {
-				(byte)(calendar.get(Calendar.DAY_OF_MONTH)),
-				(byte)(calendar.get(Calendar.MONTH) + 1),
-				(byte)(year & 0xff),
-				(byte)((year >> 8) & 0xff),
-				(byte)(time & 0xff),
-				(byte)((time >> 8) & 0xff),
-				(byte)0x00,
-				(byte)0x00
-			};
+
+			byte[] data;
+
 			switch (choix) {
 				case '0':
 					apdu.command[Apdu.INS] = Client.INS_INITIALISE_CARD;			
@@ -164,11 +185,11 @@ public class Client {
 					int puk2 = (int)(Math.random() * 10);
 					int puk3 = (int)(Math.random() * 10);
 					int puk4 = (int)(Math.random() * 10);
-					byte[] data = {
+					byte[] dataInit = {
 						(byte)pin1,(byte)pin2,(byte)pin3,(byte)pin4, //Code PIN
 						(byte)puk1,(byte)puk2,(byte)puk3,(byte)puk4 //Code PUK
 					};
-					apdu.setDataIn(data);
+					apdu.setDataIn(dataInit);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
 						System.out.println("Votre code PIN est : " +pin1 +""+pin2+""+pin3+""+pin4);
@@ -179,14 +200,15 @@ public class Client {
 					}
 				break;
 				case '1':
-					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;		
+					apdu.command[Apdu.INS] = Client.INS_BUY_TRAVEL;	
+					data = saisieDate();
 					System.out.println("Veuillez entrer le numéro de ligne :");
 					byte p1 = clavier.nextByte();
+					data[6] = p1;
 					System.out.println("Veuillez entrer le sens (0 ou 1):");
-					byte p2 = clavier.nextByte();
-					dateData[6] = p1;
-					dateData[7] = p2;
-					apdu.setDataIn(dateData);
+					p1 = clavier.nextByte();
+					data[7] = p1;
+					apdu.setDataIn(data);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() == 0x9000) {
 						System.out.println("Trajet validé !");
@@ -201,7 +223,7 @@ public class Client {
 					
 					System.out.println("Veuillez saisir votre code PIN caractère par caractère :");
 					p1 = clavier.nextByte();
-					p2 = clavier.nextByte();
+					byte p2 = clavier.nextByte();
 					byte p3 = clavier.nextByte();
 					byte p4 = clavier.nextByte();
 					byte[] cPin = {p1,p2,p3,p4};
@@ -213,12 +235,12 @@ public class Client {
 						apdu.command[Apdu.P1] = P1_RELOAD;
 						System.out.println("Saisir un montant :");
 						byte amount = clavier.nextByte();
+						data = saisieDate();
 						try {
-							dateData[6] = amount;
-							apdu.setDataIn(dateData);
+							data[6] = amount;
+							apdu.setDataIn(data);
 							cad.exchangeApdu(apdu);
-						}
-						 catch (Exception e) {
+						}catch (Exception e) {
 							System.out.println("Erreur: Impossible d'executer la commande");
 							return;
 						}
@@ -243,90 +265,85 @@ public class Client {
 					apdu.command[Apdu.INS] = Client.INS_UNLOCK_PIN;
 					apdu.command[Apdu.P1] = P1_VERIFY_PUK;
 					cad.exchangeApdu(apdu);
-					
-						System.out.println("Veuillez saisir le code PUK afin de dévérouiller le code PIN");
-						byte pu1 = clavier.nextByte();
-						byte pu2 = clavier.nextByte();
-						byte pu3 = clavier.nextByte();
-						byte pu4 = clavier.nextByte();
-						byte[] cPuk = {pu1,pu2,pu3,pu4};
+					System.out.println("Veuillez saisir le code PUK afin de dévérouiller le code PIN");
+					byte pu1 = clavier.nextByte();
+					byte pu2 = clavier.nextByte();
+					byte pu3 = clavier.nextByte();
+					byte pu4 = clavier.nextByte();
+					byte[] cPuk = {pu1,pu2,pu3,pu4};
+					apdu.setDataIn(cPuk);
+					cad.exchangeApdu(apdu);
+					if (apdu.getStatus() != 0x9000) {
+						errorManager(apdu, cad);
+					}else{
+						try{
+						apdu.command[Apdu.P1] = P1_VERIFY_PUK;
 						apdu.setDataIn(cPuk);
-						cad.exchangeApdu(apdu);
+						}catch(Exception e){
+							System.out.println("Erreur: Impossible d'executer la commande");
+							return;
+						}
 						if (apdu.getStatus() != 0x9000) {
 							errorManager(apdu, cad);
-						}else 
-						{
-							
-							try{
-							apdu.command[Apdu.P1] = P1_VERIFY_PUK;
-							apdu.setDataIn(cPuk);
-							}catch(Exception e){
-							
-								System.out.println("Erreur: Impossible d'executer la commande");
-								return;
-							}
-							if (apdu.getStatus() != 0x9000) {
-								errorManager(apdu, cad);
-							} else {
-								cad.exchangeApdu(apdu);
-								System.out.println("Carte devérouillée");
-							}
+						}else{
+							cad.exchangeApdu(apdu);
+							System.out.println("Carte devérouillée");
+						}
 					}
 				break;
 				case '5':
 					apdu.command[Apdu.INS] = Client.INS_CHECK_VALIDITY;
-					apdu.setDataIn(dateData);
+					data = saisieDate();
+					apdu.setDataIn(data);
 					cad.exchangeApdu(apdu);
 					if (apdu.getStatus() != 0x9000) {
 						errorManager(apdu, cad);
 					}else {
-						System.out.println("Carte validé !");
+						System.out.println("Carte validée !");
 					}
 					
 				break;	
 				case '6':
 					apdu.command[Apdu.INS] = Client.INS_CHECK_LOGS;
 					cad.exchangeApdu(apdu);
-					if (apdu.getStatus() != 0x9000) {
+					if(apdu.getStatus() != 0x9000){
 						errorManager(apdu, cad);
-					} else {
+					}else{
 						cad.exchangeApdu(apdu);
 						byte[] tabJ = new byte[90];
-						for(int i = 0; i<90; i++)
-						{
+						for(int i = 0; i<90; i++){
 							tabJ[i] = apdu.dataOut[i];
 						}
-					System.out.println("Historique de vos transactions :");
-					int cpt = 0;
-					for(int j = 0; j< 10; j++)
-					{
-						short year1 =(short)((tabJ[(j*9)+3] & 0xFF) << 8 | (tabJ[(j*9)+4]& 0xFF));
-						short month =(short)(tabJ[(j*9)+1]);
-						short day =(short)(tabJ[(j*9)+2]);
-						short h1 = (short)(tabJ[(j*9)+5] << 8 | (tabJ[(j*9)+6] & 0xFF));
-						short min = (short)(h1%60);
-						short h = (short)(h1/60);
-						short lignecout =(short) tabJ[(j*9)+7];
-						short sens =(short)tabJ[(j*9)+8];
-						if (tabJ[j*9] != EMPTY_DATA)
-						{
-							int num =j+1;
-							System.out.print("["+num+"]");
+						System.out.println("Historique de vos transactions :");
+						int cpt = 0;
+						for(int j = 0; j< 10; j++){
+							short year1 =(short)((tabJ[(j*9)+3] & 0xFF) << 8 | (tabJ[(j*9)+4]& 0xFF));
+							short month =(short)(tabJ[(j*9)+2]);
+							short day =(short)(tabJ[(j*9)+1]);
+							short h1 = (short)(tabJ[(j*9)+5] << 8 | (tabJ[(j*9)+6] & 0xFF));
+							short min = (short)(h1%60);
+							short h = (short)(h1/60);
+							short lignecout =(short) tabJ[(j*9)+7];
+							short sens =(short)tabJ[(j*9)+8];
+							if (tabJ[j*9] != EMPTY_DATA){
+								int num =j+1;
+								System.out.print("["+num+"]");
+							}switch(tabJ[j*9]){
+							case 0x01 : 
+								System.out.print("Achat d'un voyage : ");
+								System.out.println("Ligne "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+							break;
+							case 0x02 : 
+								System.out.println("Rechargement de la carte");
+								System.out.println("Rechargement pour "+lignecout+" trajets achetés le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+							break;
+							case 0x03 : 
+								System.out.println("Changement de correspondance au cours d'un voyage");
+								System.out.println("Nouvelle correspondance "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+							break;
+							}
+								
 						}
-						switch(tabJ[j*9])
-						{
-						case 0x01 : System.out.print("Achat d'un voyage : ");
-						System.out.println("Ligne "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
-						break;
-						case 0x02 : System.out.println("Rechargement de la carte");
-						System.out.println("Rechargement pour "+lignecout+" trajets achetés le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
-						break;
-						case 0x03 : System.out.println("Changement de correspondance au cours d'un voyage");
-						System.out.println("Nouvelle correspondance "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
-						break;
-						}
-							
-					}
 					}
 				break;	
 				case '7':
