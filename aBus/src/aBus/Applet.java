@@ -154,6 +154,9 @@ public class Applet extends javacard.framework.Applet {
     */
     
     public void process(APDU apdu) throws ISOException {
+    	if (selectingApplet()) {
+    	      return;
+    	}
 		byte[] buffer = apdu.getBuffer();
 		if (buffer[ISO7816.OFFSET_CLA] == MON_CLA) {
 			if(lifeCycleState != DEAD) {
