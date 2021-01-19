@@ -325,21 +325,15 @@ public class Client {
 							short h = (short)(h1/60);
 							short lignecout =(short) tabJ[(j*9)+7];
 							short sens =(short)tabJ[(j*9)+8];
-							if (tabJ[j*9] != EMPTY_DATA){
-								int num =j+1;
-								System.out.print("["+num+"]");
-							}switch(tabJ[j*9]){
+							switch(tabJ[j*9]){
 							case 0x01 : 
-								System.out.print("Achat d'un voyage : ");
-								System.out.println("Ligne "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+								System.out.println("[Achat] Ligne "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 							break;
 							case 0x02 : 
-								System.out.println("Rechargement de la carte");
-								System.out.println("Rechargement pour "+lignecout+" trajets achetés le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+								System.out.println("[Rechargement] pour "+lignecout+" trajets achetés le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 							break;
 							case 0x03 : 
-								System.out.println("Changement de correspondance au cours d'un voyage");
-								System.out.println("Nouvelle correspondance "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
+								System.out.println("[Correspondance] "+lignecout+", sens "+sens+" acheté le "+day+"/"+month+"/"+ year1+" à "+h+"h"+min);
 							break;
 							}
 								
